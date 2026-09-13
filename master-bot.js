@@ -267,7 +267,7 @@ const handleBotCommands = (botInstance, msg) => {
       return;
     }
     try {
-      if (waSock) await waSock.logout().catch(() => {});
+      if (waSock)  waSock.logout().catch(() => {});
       if (fs.existsSync('auth_info_baileys')) fs.rmSync('auth_info_baileys', { recursive: true, force: true });
       botInstance.sendMessage(chatId, `🔄 WhatsApp session clear! Naya QR code bheja ja raha hai...`);
       startWhatsApp();
