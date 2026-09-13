@@ -9,11 +9,27 @@ const server = http.createServer((req, res) => {
 });
 server.listen(process.env.PORT || 3000);
 
-// Support both Control Tokens from Environment Variables
 const CONTROL_TOKEN = process.env.TOKEN_1 || process.env.TELEGRAM_BOT_TOKEN || 'YOUR_MAIN_CONTROL_BOT_TOKEN'; 
 const SECOND_BOT_TOKEN = process.env.TOKEN_2 || process.env.BOT_TOKEN_2 || null;
 
-let controlBot = new TelegramBot(CONTROL_TOKEN, { polling: { interval: 150, autoStart: true } });
+// Initialize control bot with conflict-safe polling options
+let controlBot = new TelegramBot(CONTROL_TOKEN, { 
+  polling: { 
+    interval: 300, 
+    autoStart: true,
+    params: { timeout: 10 }
+  } 
+});
+
+// Catch and ignore Telegram 409 Conflict polling errors safely so the app never crashes
+controlBot.on('polling_error', (error) => {
+  if (error.code === 'ETELEGRAM' && error.message.includes('409 Conflict')) {
+    console.log('⚠️ Warning: Duplicate polling instance detected. Handled safely.');
+  } else {
+    console.error('Polling error:', error.message);
+  }
+});
+
 let userSpamBots = {};
 
 const MAIN_ADMINS = ['7501991033', '8824915409']; 
@@ -48,14 +64,6 @@ const emojiList = [
 ];
 
 let pData = {};
-
-// Auto-initialize second bot from environment variable if available
-if (SECOND_BOT_TOKEN) {
-  try {
-    // We handle secondary bot globally for fallback spamming if TOKEN_2 is provided
-    console.log("Second bot token detected from environment variables.");
-  } catch (e) {}
-}
 
 controlBot.on('callback_query', async (q) => {
   const chatId = q.message.chat.id.toString();
