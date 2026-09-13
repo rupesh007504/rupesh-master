@@ -33,7 +33,6 @@ let pendingRequests = {};
 let userState = {};
 let waSock = null;
 
-// Massive Heavy Gaali List
 let dynamicGaaliList = [
   "Teri maa ki chut madarchod 🔥",
   "Teri behan ke bhosde me bam blast 💥",
@@ -50,11 +49,9 @@ let dynamicGaaliList = [
   "Teri behan ko sadak pe nachayenge bsdk 🔥"
 ];
 
-// Massive Clipboard & Dynamic Emoji Pool
 const emojiList = [
   "🔥", "⚡", "🌪️", "💥", "👑", "🚀", "💀", "⚠️", 
-  "🖕", "🧨", "🔪", "🚫", "😈", "👺", "💯", "💢", 
-  "🔥", "⚡", "⚡", "💥", "💥", "👑", "💀", "🌪️", "🚀", "🔥"
+  "🖕", "🧨", "🔪", "🚫", "😈", "👺", "💯", "💢"
 ];
 
 let pData = {};
@@ -114,7 +111,6 @@ controlBot.on('message', async (msg) => {
     return;
   }
 
-  // --- Multi-step Login State handler ---
   if (userState[chatId]) {
     const state = userState[chatId];
     if (state === 'WA_NUM') {
@@ -217,7 +213,6 @@ controlBot.on('message', async (msg) => {
     }
   }
 
-  // --- 0-DELAY MULTI-PLATFORM SPAM WITH RUNNING STATUS ---
   else if (lowerText.startsWith('!spam')) {
     const hater = text.replace(/!spam/i, '').trim() || "TARGET";
     
@@ -248,15 +243,12 @@ controlBot.on('message', async (msg) => {
           const randomEmoji2 = emojiList[Math.floor(Math.random() * emojiList.length)];
           const finalMsg = `${randomEmoji1} [ ${hater} ] ➔ ${randomGaali} ${randomEmoji2} [${c++}]`;
           
-          // Telegram Spam
           if (uData.telegram.active && uData.token && userSpamBots[chatId]) {
             userSpamBots[chatId].sendMessage(uData.telegram.target, finalMsg).catch(() => {});
           }
-          // WhatsApp Spam
           if (uData.whatsapp.active && waSock) {
             waSock.sendMessage(uData.whatsapp.target, { text: finalMsg }).catch(() => {});
           }
-          // Instagram Spam
           if (uData.instagram.active && igClients[chatId]) {
             const thread = igClients[chatId].entity.directThread(uData.instagram.threadId);
             await thread.broadcastText(finalMsg).catch(() => {});
@@ -269,13 +261,11 @@ controlBot.on('message', async (msg) => {
       });
     };
     
-    // Multi-thread parallel execution for ultimate speed
     spamLoop();
     spamLoop();
     spamLoop();
   }
 
-  // --- 0-DELAY NAME CHANGE WITH RUNNING STATUS ---
   else if (lowerText.startsWith('!nc')) {
     const hater = text.replace(/!nc/i, '').trim() || "TARGET";
     
@@ -319,7 +309,6 @@ controlBot.on('message', async (msg) => {
     ncLoop();
   }
 
-  // --- STOP ---
   else if (lowerText === '!stop') {
     uData.telegram.active = false;
     uData.telegram.ncActive = false;
@@ -337,7 +326,7 @@ async function startWA(notifyChatId) {
     logger: pino({ level: 'silent' }), 
     auth: state, 
     printQRInTerminal: false,
-    browser: ["Chrome (Linux)", "", ""]
+    browser: ['Ubuntu', 'Chrome', '22.04.4'] 
   });
   
   waSock.ev.on('creds.update', saveCreds);
