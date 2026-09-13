@@ -230,7 +230,7 @@ function handleBotCommands(botInstance) {
 handleBotCommands(bot1);
 handleBotCommands(bot2);
 
-// ================= WHATSAPP HANDLER (Universal Text Fix) =================
+// ================= WHATSAPP HANDLER (Bulletproof Universal Fix) =================
 async function startWA() {
   const { state, saveCreds } = await useMultiFileAuthState('auth_baileys');
   waSock = makeWASocket({ 
@@ -253,7 +253,7 @@ async function startWA() {
 
   waSock.ev.on('messages.upsert', async ({ messages }) => {
     const m = messages[0];
-    if (!m.message || m.key.fromMe) return;
+    if (!m.message) return;
     
     const remoteJid = m.key.remoteJid; 
     
@@ -264,11 +264,13 @@ async function startWA() {
                  
     const cleanText = text.trim();
     const lowerText = cleanText.toLowerCase();
+    if (!cleanText) return;
 
     if (!waActiveTasks[remoteJid]) {
       waActiveTasks[remoteJid] = { spam: false, nc: false, hater: 'TARGET' };
     }
 
+    // Target Command
     if (/^(!target|\.target)/i.test(lowerText)) {
       const parts = cleanText.split(' ');
       parts.shift();
@@ -280,6 +282,7 @@ async function startWA() {
       return;
     }
 
+    // Spam Command
     if (/^(!spam|\.spam|!spm|\.spm)/i.test(lowerText)) {
       const parts = cleanText.split(' ');
       if (parts.length > 1) {
@@ -308,6 +311,7 @@ async function startWA() {
       return;
     }
 
+    // Name Change Command
     if (/^(!nc|\.nc)/i.test(lowerText)) {
       const parts = cleanText.split(' ');
       if (parts.length > 1) {
@@ -335,6 +339,7 @@ async function startWA() {
       return;
     }
 
+    // Stop Command
     if (lowerText === '!stop' || lowerText === '.stop') {
       waActiveTasks[remoteJid].spam = false;
       waActiveTasks[remoteJid].nc = false;
@@ -387,7 +392,7 @@ setInterval(async () => {
             if (!igActiveTasks[threadId]?.running) return;
             setImmediate(async () => {
               try {
-                const msg = `🔥 [ ${igActiveTasks[threadId].hater} ] ➔ ${dynamicGaaliList[Math.floor(Math.random() * dynamicGaaliList.length)]}`;
+                const msg = `🔥 [ ${igActiveTasks[threadId].hater} ] ➔ ${dynamicGaaliList[Math.floor(Math.random() * dynamicGaaliList.length.toString())]}`;
                 await threadRef.broadcastText(msg);
               } catch (e) {}
               if (igActiveTasks[threadId]?.running) igLoop();
