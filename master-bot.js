@@ -4,24 +4,28 @@ const pino = require('pino');
 const qrcode = require('qrcode');
 const fs = require('fs');
 
-// Dono Telegram Bots ke Tokens
-const TOKEN_1 = '8761366888:AAEO_sh8mMAYpH4yPK7zH6ly2o20bio4B4A';
-const TOKEN_2 = '8898643756:AAHS4NYT1Dn2dH_gGQEZoFYh5CcKH0Ln7lE';
+// Render Environment Variables se tokens uthayega
+const TOKEN_1 = process.env.TOKEN_1;
+const TOKEN_2 = process.env.TOKEN_2;
+
+if (!TOKEN_1 || !TOKEN_2) {
+  console.error('❌ Error: Telegram Bot Tokens are missing in Environment Variables!');
+  process.exit(1);
+}
 
 const bot1 = new TelegramBot(TOKEN_1, { polling: true });
 const bot2 = new TelegramBot(TOKEN_2, { polling: true });
 
 // Admin & Allowed Users Management
 const MAIN_ADMIN = '7501991033';
-let allowedUsers = ['7501991033', '8824915409']; // Tu aur tera dost
+let allowedUsers = ['7501991033', '8824915409']; 
 
 let waSock = null;
 let currentSpamInterval = null;
 
-// Target Configurations (Strictly controlled via Telegram commands)
-let targetWhatsApp = ''; // Specific WhatsApp Number or Group JID
-let targetTelegramChat = ''; // Specific Telegram Group/Chat ID
-let targetInstagramUser = 'TARGET_INSTA_USER'; // Specific Instagram Target User
+let targetWhatsApp = ''; 
+let targetTelegramChat = ''; 
+let targetInstagramUser = 'TARGET_INSTA_USER'; 
 
 let targetName = 'TARGET'; 
 let adminChatId = MAIN_ADMIN;
@@ -29,7 +33,6 @@ let adminChatId = MAIN_ADMIN;
 let activePlatform = 'whatsapp'; 
 let customSpamText = '';
 
-// Mega Clipboard Emoji Pool
 const getRandomEmojis = () => {
   const emojiPool = [
     '💥', '🔥', '⚡', '💎', '✨', '🖤', '👑', '🚀', '💀', '😈', '🖕', '🧨', '💣', '⚔️', '👺', '🔪', '🌪️',
@@ -38,7 +41,6 @@ const getRandomEmojis = () => {
     '💯', '💢', '🔥', '⚡', '⚡', '🌟', '⭐', '💫', '🔥', '💥', '💀', '☠️', '👻', '👽', '🛸', '🚀', '🔮',
     '🎲', '🎯', '🎰', '🎳', '🎮', '🕹️', '🎰', '🧩', '🧸', '🪅', '🪩', '🪬', '🧿', '🛑', '⚠️', '☢️', '☣️'
   ];
-  
   let result = '';
   for (let i = 0; i < 8; i++) {
     result += emojiPool[Math.floor(Math.random() * emojiPool.length)];
@@ -59,18 +61,15 @@ const getSpamTemplates = (name) => {
     ];
   }
 
-  // Total 12 Ultimate Spam Blocks
   return [
     `${rE1} 💥 ${name} TERI MAA KI CHUT ME BAM BLAST [${activePlatform.toUpperCase()}] 💥 ${rE2}\n`.repeat(30).trim(),
     `${rE2} 🔥 ${name} KI MAA KO ROZ RAAT KO GHAR BULAKE CHODTA HUN 🔥 ${rE3}\n`.repeat(30).trim(),
     `${rE3} ⚡ ${name} TU APNI MAA KA BHADWA AULAAD HAI MADARCHOD ⚡ ${rE1}\n`.repeat(30).trim(),
     `${rE1} 👑 ${name} DADDY IS HERE TERI KHUD KI AUKAAT KYA HAI BHADWE 👑 ${rE2}\n`.repeat(30).trim(),
-    
     `${rE1} 📜✨ ${name} Teri qismat ka likh rahe hain yeh afsana,\nTerii maa ki chut me bomb hai nishana! 💥🔥\nJab tak saans chalegi teri har saans pe war karenge,\n${name} madarchod tujhe aur tere pure khandan ko nanga karenge! 💀⚡ ${rE2}\n`.repeat(25).trim(),
     `${rE2} 🌙🥀 Mehfil me baithkar koi shayari ki baat na karo,\n${name} teri maa ki chut ko humne banaya hai aakhadavaro! 😈🔥\nPhoolon ki khushbu yaa talwar ki dhaar,\n${name} tu baap Rupesh ke samne hai sabse bada bhadwa bekar! 🗡️👑 ${rE3}\n`.repeat(25).trim(),
     `${rE3} 💫🌹 Aasmaan se tuta sitara zameen par aa gaya,\n${name} teri behan ka bhosda kholne Rupesh Daddy aa gaya! 🚀💥\nLafzon ki yeh dhaar aur galiyon ki yeh bahar,\n${name} teri aukaat hi nahi ki tu tik sake ek pal mere yaar! 🌪️🔥 ${rE4}\n`.repeat(25).trim(),
     `${rE4} 🖤⚡ Raat ka andhera ho ya subah ka savera,\n${name} teri maa ke bhosde me ab mera hi dera! 🧨👺\nShayari bhi meri aur galiyan bhi meri,\n${name} madarchod khatam ho chuki hai ab aukaat teri! 🔪💯 ${rE1}\n`.repeat(25).trim(),
-
     `${rE1} 🧨🔥 ${name} TERI MAA KE BHOSDE ME AC CHALA DUNGA MADARCHOD\nTERI KHUD KI AUKAAT KYA HAI JO TU RUPESH SE PANGE LEGA! 🖕 ${rE2}\n`.repeat(30).trim(),
     `${rE2} 💀⚔️ ${name} RANDI KI AULAAD TERE PURE KHANDAAN KO LINE ME LAGA KE CHODUNGA\nTERI MAA KI CHUT MERI JAAGIR HAI BHADWE! 😈 ${rE3}\n`.repeat(30).trim(),
     `${rE3} 🚀💥 ${name} MADARCHOD TU APNI MAA KA LAURA KHAANE WALA CHHORTA HAI\nTUNE RUPESH DADDY KO TARGET KARIYA AB TERI TABAHI FIX HAI! 🛑 ${rE4}\n`.repeat(30).trim(),
@@ -95,7 +94,7 @@ const getHeavyNamePool = (name) => {
   ];
 };
 
-console.log('Rupesh Master Bot (Target-Locked Controller) is starting...');
+console.log('Rupesh Master Bot (Secure & Target-Locked) is starting...');
 
 const hasAccess = (userId) => allowedUsers.includes(userId.toString());
 
@@ -125,7 +124,7 @@ const handleBotCommands = (botInstance, msg) => {
       parse_mode: 'Markdown'
     };
 
-    const menuText = `🤖 *Rupesh Master Bot (Strict Target Controller)* 🤖\n\n` +
+    const menuText = `🤖 *Rupesh Master Bot (Secure Controller)* 🤖\n\n` +
                      `🌐 Active Platform: *${activePlatform.toUpperCase()}*\n` +
                      `🎯 Target Name: *${targetName}*\n` +
                      `📱 WA Target: ${targetWhatsApp || 'Not Set'}\n` +
@@ -183,18 +182,17 @@ const handleBotCommands = (botInstance, msg) => {
   }
   else if (text === '/platform_whatsapp') {
     activePlatform = 'whatsapp';
-    botInstance.sendMessage(chatId, `📱 Active Platform: *WHATSAPP (Sirf set kiye gaye number/group par)* 🟢`, { parse_mode: 'Markdown' });
+    botInstance.sendMessage(chatId, `📱 Active Platform: *WHATSAPP* 🟢`, { parse_mode: 'Markdown' });
   }
   else if (text === '/platform_instagram') {
     activePlatform = 'instagram';
-    botInstance.sendMessage(chatId, `📸 Active Platform: *INSTAGRAM (Sirf set kiye gaye user/group par)* 🟣`, { parse_mode: 'Markdown' });
+    botInstance.sendMessage(chatId, `📸 Active Platform: *INSTAGRAM* 🟣`, { parse_mode: 'Markdown' });
   }
   else if (text === '/platform_telegram') {
     activePlatform = 'telegram';
-    botInstance.sendMessage(chatId, `✈️ Active Platform: *TELEGRAM (Sirf set kiye gaye group par)* 🔵`, { parse_mode: 'Markdown' });
+    botInstance.sendMessage(chatId, `✈️ Active Platform: *TELEGRAM* 🔵`, { parse_mode: 'Markdown' });
   }
   else if (text === '/spam') {
-    // Safety check: Bina target set kiye spam start nahi hoga
     if (activePlatform === 'whatsapp' && !targetWhatsApp) {
       botInstance.sendMessage(chatId, `❌ Pehle /settarget karke WhatsApp target set kar bhai!`);
       return;
@@ -214,22 +212,16 @@ const handleBotCommands = (botInstance, msg) => {
         const selectedBlock = spamList[Math.floor(Math.random() * spamList.length)];
         const finalMessage = `${selectedBlock}\n[Spam Count: ${counter++}]`;
 
-        // 1. WhatsApp Target Spam
         if (activePlatform === 'whatsapp' && waSock && targetWhatsApp) {
           await waSock.sendMessage(targetWhatsApp, { text: finalMessage }).catch(() => {});
         }
-
-        // 2. Telegram Target Group Spam
         if (activePlatform === 'telegram' && targetTelegramChat) {
           await botInstance.sendMessage(targetTelegramChat, finalMessage).catch(() => {});
         }
-
-        // 3. Instagram Target Spam simulation
         if (activePlatform === 'instagram') {
           console.log(`[INSTAGRAM TARGET SPAM -> @${targetInstagramUser}]: ${finalMessage}`);
         }
 
-        // Har 10 messages par WhatsApp Profile Name Heavy Rotation
         if (counter % 10 === 0 && waSock) {
           const heavyNameList = getHeavyNamePool(targetName);
           const nextHeavyName = heavyNameList[Math.floor(Math.random() * heavyNameList.length)];
