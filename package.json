@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Multi-platform bot",
   "main": "master-bot.js",
-  "type": "module",
   "scripts": {
     "start": "node master-bot.js"
   },
