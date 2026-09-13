@@ -3,8 +3,19 @@ const TelegramBot = require('node-telegram-bot-api');
 const pino = require('pino');
 const qrcode = require('qrcode');
 const fs = require('fs');
+const http = require('http');
 
-// Render Environment Variables se tokens uthayega
+// Render ke liye HTTP Server zaroori hai taaki port bind rahe aur app crash na ho
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Rupesh Master Bot is Active & Running 24/7!\n');
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`HTTP Server is listening on port ${PORT}`);
+});
+
 const TOKEN_1 = process.env.TOKEN_1;
 const TOKEN_2 = process.env.TOKEN_2;
 
@@ -16,7 +27,6 @@ if (!TOKEN_1 || !TOKEN_2) {
 const bot1 = new TelegramBot(TOKEN_1, { polling: true });
 const bot2 = new TelegramBot(TOKEN_2, { polling: true });
 
-// Admin & Allowed Users Management
 const MAIN_ADMIN = '7501991033';
 let allowedUsers = ['7501991033', '8824915409']; 
 
