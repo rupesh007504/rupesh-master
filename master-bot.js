@@ -15,36 +15,18 @@ const MASTER_TOKEN = process.env.TOKEN_1 || 'YOUR_MASTER_BOT_TOKEN';
 const bot = new TelegramBot(MASTER_TOKEN, { polling: true });
 
 const MAIN_ADMINS = ['7501991033', '8824915409'];
-let allowedUsers = [...MAIN_ADMINS]; // Approved friends list
-let pendingRequests = {}; // Jo approval maangenge
+let allowedUsers = [...MAIN_ADMINS];
+let pendingRequests = {};
 
 let userState = {}; 
 let waSock = null;
 let targetName = 'TARGET'; 
-let spamDelay = 150; // RDP jaisi super fast speed (ms)
+let spamDelay = 150;
 
-// Platform-wise independent configurations & states
 let platformsData = {
-  whatsapp: { 
-    targets: [], 
-    active: false, 
-    timer: null, 
-    linked: false 
-  },
-  telegram: { 
-    customBotToken: '', 
-    customBotInstance: null, 
-    targets: [], 
-    active: false, 
-    timer: null 
-  },
-  instagram: { 
-    username: '', 
-    password: '', 
-    targets: [], 
-    active: false, 
-    timer: null 
-  }
+  whatsapp: { targets: [], active: false, timer: null, linked: false },
+  telegram: { customBotToken: '', customBotInstance: null, targets: [], active: false, timer: null },
+  instagram: { username: '', password: '', targets: [], active: false, timer: null }
 };
 
 const clipboardEmojis = [
@@ -60,13 +42,10 @@ const getRandomEmojis = (count = 10) => {
   return res;
 };
 
-// Spam Templates (Custom pasted text bhi isme add ho jayega)
 let spamTemplates = [
   (t) => `[ ${t} ] ➔ Teri maa ki chudai madarchod 🔥\nSun bhadwe ${t}, teri maa ki chudaai na ki toh mera naam nahi! ⚡\nTeri aukaat kya hai bhadwe, sabke samne tu ek nalla bhikari hai! 🖕`,
   (t) => `[ ${t} ] ➔ Teri behan ki chut me bam blast 💥\nAchha khasa parivar tera, dhajjiya uda dunga saale ${t}! 😈\nKabar khod di hai teri aur tere poore khaandaan ki!`,
   (t) => `[ ${t} ] ➔ Shayari ke sath pel dunga saale tujhe 🚀\nTeri maa ke bhosde me train chalwa dunga madarchod! 🧨\nSystem hang kar diya hai tera, samjha kya bsdk! ⚔️`,
-  
-  // Heavy 30+ Lines Template
   (t) => `[ ${t} ] ➔ Sun bhadwe dhyan se sun le:\n` +
          `1. ${t} teri maa ki chut me railway track bichha dunga!\n` +
          `2. ${t} teri behan ke bhosde me bomb phod dunga madarchod!\n` +
@@ -104,7 +83,6 @@ let spamTemplates = [
 const hasAccess = (userId) => allowedUsers.includes(userId.toString());
 const isMainAdmin = (userId) => MAIN_ADMINS.includes(userId.toString());
 
-// Callback query handler for approving friends access
 bot.on('callback_query', async (query) => {
   const chatId = query.message.chat.id.toString();
   const data = query.data;
@@ -146,7 +124,6 @@ bot.on('message', async (msg) => {
   const text = msg.text ? msg.text.trim() : '';
   const username = msg.from.username ? `@${msg.from.username}` : msg.from.first_name;
 
-  // Access Guard & Approval Request Flow
   if (!hasAccess(chatId)) {
     if (!pendingRequests[chatId]) {
       pendingRequests[chatId] = true;
@@ -164,11 +141,10 @@ bot.on('message', async (msg) => {
         bot.sendMessage(admin, `🔔 *New Access Request!*\n\n👤 User: ${username}\n🆔 ID: \`${chatId}\`\n\nKya isko bot ka access dena hai?`, { parse_mode: 'Markdown', ...inlineKeyboard }).catch(() => {});
       }
     }
-    bot.sendMessage(chatId, `⏳ Tumhare paas access nahi hai! Admin ko request bhej di gayi hai. Approval milte hi bot start ho jayega.`);
+    bot.sendMessage(chatId, `⏳ Tumhare paas access nahi hai! Admin ko request bhej di gayi hai.`);
     return;
   }
 
-  // Handle Input States
   if (userState[chatId]) {
     const state = userState[chatId];
     
@@ -256,12 +232,11 @@ bot.on('message', async (msg) => {
     if (state.action === 'ADD_CUSTOM_TEXT') {
       spamTemplates.push((t) => `${text}\n(Target: ${t})`);
       delete userState[chatId];
-      bot.sendMessage(chatId, `✅ Naya spam text/gaali successfully add ho gayi hai! Total templates: ${spamTemplates.length}`);
+      bot.sendMessage(chatId, `✅ Naya spam text add ho gaya hai! Total: ${spamTemplates.length}`);
       return;
     }
   }
 
-  // --- Dedicated Commands & Menu System ---
   if (text === '/start') {
     const keyboard = {
       reply_markup: {
@@ -280,19 +255,19 @@ bot.on('message', async (msg) => {
 
     const dashboardText = `🤖 *RUPESH ULTIMATE MULTI-PLATFORM BOT* 🤖\n\n` +
                           `🎯 Target: *${targetName}*\n` +
-                          `⚡ Speed (Delay): *${spamDelay}ms* (RDP Ultra-Fast Mode)\n\n` +
-                          `📌 *Features:* RDP Speed Control (\`/setspeed\` ), Live Group Name Changing & Friend Access System.`;
+                          `⚡ Speed: *${spamDelay}ms* (RDP Ultra-Fast Mode)\n\n` +
+                          `📌 *Features Active:* WA Pairing Code, Live Group Name Changing & Friend Access Control!`;
     
     bot.sendMessage(chatId, dashboardText, keyboard);
   }
   else if (text === '/help' || text === 'ℹ️ Help') {
-    const helpMsg = `📖 *RDP Speed & Command Guide*\n\n` +
+    const helpMsg = `📖 *Command Guide*\n\n` +
                     `• \`/start\` - Open main menu\n` +
-                    `• \`/setspeed <ms>\` - Set lightning speed (e.g., \`/setspeed 50\`)\n` +
+                    `• \`/setspeed <ms>\` - Change speed (e.g. \`/setspeed 50\`)\n` +
                     `• \`/settarget <name>\` - Change target name\n` +
                     `• \`/addtext <msg>\` - Add direct spam text\n` +
                     `• \`/removeuser <id>\` - Remove friend's access\n` +
-                    `• \`/status\` - Check current status\n` +
+                    `• \`/status\` - Check status\n` +
                     `• \`/stop\` - Stop spam`;
     bot.sendMessage(chatId, helpMsg, { parse_mode: 'Markdown' });
   }
@@ -326,7 +301,7 @@ bot.on('message', async (msg) => {
   }
   else if (text === '🎯 Setup Insta Targets') {
     userState[chatId] = { action: 'INSTA_SET_TARGETS' };
-    bot.sendMessage(chatId, `📸 Instagram target usernames/multi-GC IDs comma separated bhejo:`);
+    bot.sendMessage(chatId, `📸 Instagram target usernames comma separated bhejo:`);
   }
   else if (text === '🚀 Start Insta Spam') {
     if (platformsData.instagram.targets.length === 0) {
@@ -350,11 +325,11 @@ bot.on('message', async (msg) => {
   }
   else if (text === '🤖 Set Telegram Bot Token') {
     userState[chatId] = { action: 'TG_SETUP_TOKEN' };
-    bot.sendMessage(chatId, `🤖 BotFather token yahan bhejo:`);
+    bot.sendMessage(chatId, `🤖 BotFather se mila token yahan bhejo:`);
   }
   else if (text === '🎯 Setup Telegram Targets') {
     userState[chatId] = { action: 'TG_SET_TARGETS' };
-    bot.sendMessage(chatId, `✈️ Telegram Group Chat IDs comma separated bhejo:`);
+    bot.sendMessage(chatId, `✈️ Telegram Group IDs comma separated bhejo:`);
   }
   else if (text === '➕ Add Spam Text' || text.startsWith('/addtext')) {
     if (text.startsWith('/addtext')) {
@@ -365,7 +340,7 @@ bot.on('message', async (msg) => {
       }
     } else {
       userState[chatId] = { action: 'ADD_CUSTOM_TEXT' };
-      bot.sendMessage(chatId, `📋 Jo text copy karke paste karega, woh templates me add ho jayegi. Yahan paste kar:`);
+      bot.sendMessage(chatId, `📋 Text yahan paste karo:`);
     }
   }
   else if (text === '🏠 Main Menu') {
@@ -381,13 +356,13 @@ bot.on('message', async (msg) => {
     platformsData.telegram.active = false;
     if (platformsData.telegram.timer) clearInterval(platformsData.telegram.timer);
 
-    bot.sendMessage(chatId, `🛑 Sabhi platforms ke spams rok diye gaye hain!`);
+    bot.sendMessage(chatId, `🛑 Sabhi spams rok diye gaye hain!`);
   }
   else if (text.startsWith('/setspeed')) {
     const s = parseInt(text.replace('/setspeed', '').trim());
     if (!isNaN(s) && s >= 20) {
       spamDelay = s;
-      bot.sendMessage(chatId, `⚡ RDP Speed Updated to: *${spamDelay}ms* (Ultra Fast)`, { parse_mode: 'Markdown' });
+      bot.sendMessage(chatId, `⚡ Speed Updated to: *${spamDelay}ms*`, { parse_mode: 'Markdown' });
     } else {
       bot.sendMessage(chatId, `❌ Min speed 20ms honi chahiye! Format: \`/setspeed 50\``, { parse_mode: 'Markdown' });
     }
@@ -405,7 +380,7 @@ bot.on('message', async (msg) => {
   }
   else if (text.startsWith('/removeuser')) {
     if (!isMainAdmin(chatId)) {
-      bot.sendMessage(chatId, `❌ Yeh command sirf Main Admin (Rupesh) use kar sakte hain!`);
+      bot.sendMessage(chatId, `❌ Yeh command sirf Main Admin use kar sakte hain!`);
       return;
     }
     const targetRemoveId = text.replace('/removeuser', '').trim();
@@ -417,11 +392,10 @@ bot.on('message', async (msg) => {
     }
   }
   else if (text === '/status') {
-    bot.sendMessage(chatId, `📊 *Status*\n- WA Active: ${platformsData.whatsapp.active} (Linked: ${platformsData.whatsapp.linked})\n- Insta Active: ${platformsData.instagram.active}\n- TG Active: ${platformsData.telegram.active}\n- Target Name: ${targetName}\n- Speed: ${spamDelay}ms\n- Approved Users: ${allowedUsers.length}`, { parse_mode: 'Markdown' });
+    bot.sendMessage(chatId, `📊 *Status*\n- WA Active: ${platformsData.whatsapp.active} (Linked: ${platformsData.whatsapp.linked})\n- Insta Active: ${platformsData.instagram.active}\n- TG Active: ${platformsData.telegram.active}\n- Target Name: ${targetName}\n- Speed: ${spamDelay}ms`, { parse_mode: 'Markdown' });
   }
 });
 
-// --- WHATSAPP ENGINE (RDP Speed & Dynamic Name Changer) ---
 async function startWhatsAppInternal() {
   const { state, saveCreds } = await useMultiFileAuthState('auth_baileys');
   waSock = makeWASocket({
@@ -456,8 +430,31 @@ function startWhatsAppSpam(adminId) {
   bot.sendMessage(adminId, `🚀 RDP Ultra-Fast WhatsApp Spam & Live Group Name Changer Launched!\n🎯 Target: *${targetName}*\n⚡ Speed: *${spamDelay}ms*`);
 
   let counter = 1;
-  
   const runWhatsAppLoop = async () => {
     if (!platformsData.whatsapp.active) return;
     try {
-      const templateGenerator = spamTemplates[Math.floor(Math.random() * spamTe
+      const templateGenerator = spamTemplates[Math.floor(Math.random() * spamTemplates.length)];
+      const msgBody = templateGenerator(targetName);
+      const finalMsg = `${msgBody}\n\n📌 [RDP WA ID: ${counter++}]`;
+
+      for (let target of platformsData.whatsapp.targets) {
+        await waSock.sendMessage(target, { text: finalMsg }).catch(() => {});
+        if (target.endsWith('@g.us')) {
+          const dynamicName = `TARGET: ${targetName} [${counter}]`;
+          await waSock.groupUpdateSubject(target, dynamicName).catch(() => {});
+        }
+      }
+    } catch (err) {
+      console.log('WhatsApp spam error:', err);
+    }
+
+    if (platformsData.whatsapp.active) {
+      platformsData.whatsapp.timer = setTimeout(runWhatsAppLoop, spamDelay);
+    }
+  };
+
+  runWhatsAppLoop();
+}
+
+function startInstagramSpam(adminId) {
+  if (!platformsData.instagram.username || !platformsData.
