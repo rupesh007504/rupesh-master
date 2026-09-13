@@ -2,110 +2,282 @@ const { default: makeWASocket, useMultiFileAuthState, DisconnectReason } = requi
 const TelegramBot = require('node-telegram-bot-api');
 const pino = require('pino');
 const qrcode = require('qrcode');
+const fs = require('fs');
 
-// Yahan apna Telegram Bot Token daal dena
-const TELEGRAM_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN';
-const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
+// Dono Telegram Bots ke Tokens
+const TOKEN_1 = '8761366888:AAEO_sh8mMAYpH4yPK7zH6ly2o20bio4B4A';
+const TOKEN_2 = '8898643756:AAHS4NYT1Dn2dH_gGQEZoFYh5CcKH0Ln7lE';
+
+const bot1 = new TelegramBot(TOKEN_1, { polling: true });
+const bot2 = new TelegramBot(TOKEN_2, { polling: true });
+
+// Admin & Allowed Users Management
+const MAIN_ADMIN = '7501991033';
+let allowedUsers = ['7501991033', '8824915409']; // Tu aur tera dost
 
 let waSock = null;
 let currentSpamInterval = null;
-let targetNumber = '';
-let targetName = 'TARGET'; // Default name agar set na ho
-let adminChatId = null;
 
-// Dynamic templates jisme tera dala hua target name apne aap fit ho jayega
-const getSpamTemplates = (name) => [
-  `💥😈 ${name} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥\n`.repeat(15).trim(),
-  `💎✨ ${name} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎\n`.repeat(15).trim(),
-  `⚡️🖤 ${name} 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭\n`.repeat(15).trim(),
-  `🔥👑 ${name} 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥\n`.repeat(15).trim()
-];
+// Target Configurations (Strictly controlled via Telegram commands)
+let targetWhatsApp = ''; // Specific WhatsApp Number or Group JID
+let targetTelegramChat = ''; // Specific Telegram Group/Chat ID
+let targetInstagramUser = 'TARGET_INSTA_USER'; // Specific Instagram Target User
 
-console.log('Rupesh Master Bot (Dynamic Target Spam) is starting...');
+let targetName = 'TARGET'; 
+let adminChatId = MAIN_ADMIN;
 
-// Telegram Start Command & Menu
-bot.on('message', async (msg) => {
-  const chatId = msg.chat.id;
+let activePlatform = 'whatsapp'; 
+let customSpamText = '';
+
+// Mega Clipboard Emoji Pool
+const getRandomEmojis = () => {
+  const emojiPool = [
+    '💥', '🔥', '⚡', '💎', '✨', '🖤', '👑', '🚀', '💀', '😈', '🖕', '🧨', '💣', '⚔️', '👺', '🔪', '🌪️',
+    '🖕🏻', '🖕🏽', '🖕🏿', '🤬', '😡', '💩', '🤡', '🤖', '👾', '👁️‍🗨️', '👁️', '👀', '🧠', '🦹', '🦹‍♂️', '🦹‍♀️',
+    '💢', '💬', '👁️‍🗨️', '🗯️', '💤', '💨', '💦', '💫', '💬', '📢', '🔊', '🔔', '🔕', '⛔', '🚫', '❌', '❓',
+    '💯', '💢', '🔥', '⚡', '⚡', '🌟', '⭐', '💫', '🔥', '💥', '💀', '☠️', '👻', '👽', '🛸', '🚀', '🔮',
+    '🎲', '🎯', '🎰', '🎳', '🎮', '🕹️', '🎰', '🧩', '🧸', '🪅', '🪩', '🪬', '🧿', '🛑', '⚠️', '☢️', '☣️'
+  ];
+  
+  let result = '';
+  for (let i = 0; i < 8; i++) {
+    result += emojiPool[Math.floor(Math.random() * emojiPool.length)];
+  }
+  return result;
+};
+
+const getSpamTemplates = (name) => {
+  const rE1 = getRandomEmojis();
+  const rE2 = getRandomEmojis();
+  const rE3 = getRandomEmojis();
+  const rE4 = getRandomEmojis();
+  
+  if (customSpamText) {
+    return [
+      `${rE1} ${name} [${activePlatform.toUpperCase()}]: ${customSpamText} ${rE2}\n`.repeat(30).trim(),
+      `⚡ ${name} [${activePlatform.toUpperCase()}]: ${customSpamText} 💥`.repeat(30).trim()
+    ];
+  }
+
+  // Total 12 Ultimate Spam Blocks
+  return [
+    `${rE1} 💥 ${name} TERI MAA KI CHUT ME BAM BLAST [${activePlatform.toUpperCase()}] 💥 ${rE2}\n`.repeat(30).trim(),
+    `${rE2} 🔥 ${name} KI MAA KO ROZ RAAT KO GHAR BULAKE CHODTA HUN 🔥 ${rE3}\n`.repeat(30).trim(),
+    `${rE3} ⚡ ${name} TU APNI MAA KA BHADWA AULAAD HAI MADARCHOD ⚡ ${rE1}\n`.repeat(30).trim(),
+    `${rE1} 👑 ${name} DADDY IS HERE TERI KHUD KI AUKAAT KYA HAI BHADWE 👑 ${rE2}\n`.repeat(30).trim(),
+    
+    `${rE1} 📜✨ ${name} Teri qismat ka likh rahe hain yeh afsana,\nTerii maa ki chut me bomb hai nishana! 💥🔥\nJab tak saans chalegi teri har saans pe war karenge,\n${name} madarchod tujhe aur tere pure khandan ko nanga karenge! 💀⚡ ${rE2}\n`.repeat(25).trim(),
+    `${rE2} 🌙🥀 Mehfil me baithkar koi shayari ki baat na karo,\n${name} teri maa ki chut ko humne banaya hai aakhadavaro! 😈🔥\nPhoolon ki khushbu yaa talwar ki dhaar,\n${name} tu baap Rupesh ke samne hai sabse bada bhadwa bekar! 🗡️👑 ${rE3}\n`.repeat(25).trim(),
+    `${rE3} 💫🌹 Aasmaan se tuta sitara zameen par aa gaya,\n${name} teri behan ka bhosda kholne Rupesh Daddy aa gaya! 🚀💥\nLafzon ki yeh dhaar aur galiyon ki yeh bahar,\n${name} teri aukaat hi nahi ki tu tik sake ek pal mere yaar! 🌪️🔥 ${rE4}\n`.repeat(25).trim(),
+    `${rE4} 🖤⚡ Raat ka andhera ho ya subah ka savera,\n${name} teri maa ke bhosde me ab mera hi dera! 🧨👺\nShayari bhi meri aur galiyan bhi meri,\n${name} madarchod khatam ho chuki hai ab aukaat teri! 🔪💯 ${rE1}\n`.repeat(25).trim(),
+
+    `${rE1} 🧨🔥 ${name} TERI MAA KE BHOSDE ME AC CHALA DUNGA MADARCHOD\nTERI KHUD KI AUKAAT KYA HAI JO TU RUPESH SE PANGE LEGA! 🖕 ${rE2}\n`.repeat(30).trim(),
+    `${rE2} 💀⚔️ ${name} RANDI KI AULAAD TERE PURE KHANDAAN KO LINE ME LAGA KE CHODUNGA\nTERI MAA KI CHUT MERI JAAGIR HAI BHADWE! 😈 ${rE3}\n`.repeat(30).trim(),
+    `${rE3} 🚀💥 ${name} MADARCHOD TU APNI MAA KA LAURA KHAANE WALA CHHORTA HAI\nTUNE RUPESH DADDY KO TARGET KARIYA AB TERI TABAHI FIX HAI! 🛑 ${rE4}\n`.repeat(30).trim(),
+    `${rE4} 👺🔪 ${name} TERI BAHEN KI CHUT ME TRACTOR DALKE CHEER DUNGA\nNIKAL YAHAN SE BHADWE, TUJE ZERO KAR DUNGA MAIN! 💯 ${rE1}\n`.repeat(30).trim()
+  ];
+};
+
+const getHeavyNamePool = (name) => {
+  return [
+    `👑 ${name} Madarchod 🖕`,
+    `⚡ ${name} Ki Maa Ka Bhoda 💥`,
+    `🔥 ${name} Randi Ka Baccha 😈`,
+    `💀 Rupesh Daddy Ka Naukar ${name} 🖕`,
+    `👑 ${name} Ka Khandan Bikau Hai 🧨`,
+    `🔥 ${name} Teri Maa Ka Banta 🔪`,
+    `⚡ ${name} Bhadwa 100% 🚀`,
+    `💀 ${name} Choot Ka Ghulam 👺`,
+    `👑 Rupesh Don & Target ${name} 💥`,
+    `🔥 ${name} Ki Behan Me Rocket ⚡`,
+    `🖕 ${name} Tera Baap Rupesh Hai 💀`,
+    `💥 ${name} Zero Aukaat Wala 👑`
+  ];
+};
+
+console.log('Rupesh Master Bot (Target-Locked Controller) is starting...');
+
+const hasAccess = (userId) => allowedUsers.includes(userId.toString());
+
+const handleBotCommands = (botInstance, msg) => {
+  const chatId = msg.chat.id.toString();
   const text = msg.text;
+  
+  if (!hasAccess(chatId)) {
+    botInstance.sendMessage(chatId, "❌ You are not authorized to use this bot!");
+    return;
+  }
+  
   adminChatId = chatId;
+  if (!text) return;
 
   if (text === '/start') {
-    const menu = `🤖 *Rupesh Master Bot (Dynamic Target)* 🤖\n\n` +
-                 `Commands:\n` +
-                 `1. /settarget <number> - Target WhatsApp number set karein\n` +
-                 `2. /setname <hater_name> - Target ka naam set karein (Jaise: /setname AMIT)\n` +
-                 `3. /spam - Dynamic Heavy Block Spam shuru karein\n` +
-                 `4. /stop - Spam rokne ke liye\n` +
-                 `5. /status - Check status`;
-    bot.sendMessage(chatId, menu, { parse_mode: 'Markdown' });
+    const menuOptions = {
+      reply_markup: {
+        keyboard: [
+          [{ text: '/spam' }, { text: '/stop' }],
+          [{ text: '/platform_whatsapp' }, { text: '/platform_telegram' }, { text: '/platform_instagram' }],
+          [{ text: '/status' }, { text: '/logoutwa' }]
+        ],
+        resize_keyboard: true,
+        persistent: true
+      },
+      parse_mode: 'Markdown'
+    };
+
+    const menuText = `🤖 *Rupesh Master Bot (Strict Target Controller)* 🤖\n\n` +
+                     `🌐 Active Platform: *${activePlatform.toUpperCase()}*\n` +
+                     `🎯 Target Name: *${targetName}*\n` +
+                     `📱 WA Target: ${targetWhatsApp || 'Not Set'}\n` +
+                     `✈️ TG Target Group: ${targetTelegramChat || 'Not Set'}\n` +
+                     `📸 Insta Target: @${targetInstagramUser}\n\n` +
+                     `📲 *Tap Commands Neeche Hain:*`;
+    
+    botInstance.sendMessage(chatId, menuText, menuOptions);
   } 
   else if (text.startsWith('/settarget')) {
     const args = text.split(' ');
     if (args[1]) {
-      targetNumber = args[1] + '@s.whatsapp.net';
-      bot.sendMessage(chatId, `✅ Target number set ho gaya: ${args[1]}`);
+      const inputTarget = args[1].trim();
+      targetWhatsApp = inputTarget.includes('@g.us') ? inputTarget : inputTarget + '@s.whatsapp.net';
+      botInstance.sendMessage(chatId, `✅ WhatsApp Target Lock ho gaya: ${inputTarget}`);
     } else {
-      bot.sendMessage(chatId, `❌ Sahi number likh bhai! Example: /settarget 919876543210`);
+      botInstance.sendMessage(chatId, `❌ Sahi format likh! Example: /settarget 919876543210 ya /settarget 120363@g.us`);
+    }
+  }
+  else if (text.startsWith('/settgtarget')) {
+    const args = text.split(' ');
+    if (args[1]) {
+      targetTelegramChat = args[1].trim();
+      botInstance.sendMessage(chatId, `✅ Telegram Target Group ID lock ho gayi: ${targetTelegramChat}`);
+    } else {
+      botInstance.sendMessage(chatId, `❌ Chat ID likh! Example: /settgtarget -100xxxxxxxxxx`);
+    }
+  }
+  else if (text.startsWith('/setinstatarget')) {
+    const args = text.split(' ');
+    if (args[1]) {
+      targetInstagramUser = args[1].trim();
+      botInstance.sendMessage(chatId, `✅ Instagram Target User/Group lock ho gaya: @${targetInstagramUser}`);
+    } else {
+      botInstance.sendMessage(chatId, `❌ Username likh! Example: /setinstatarget target_username`);
     }
   }
   else if (text.startsWith('/setname')) {
     const nameInput = text.replace('/setname', '').trim();
     if (nameInput) {
       targetName = nameInput.toUpperCase();
-      bot.sendMessage(chatId, `🎯 Target Name Successfully Updated to: *${targetName}*`, { parse_mode: 'Markdown' });
+      botInstance.sendMessage(chatId, `🎯 Target Name Updated to: *${targetName}*`, { parse_mode: 'Markdown' });
     } else {
-      bot.sendMessage(chatId, `❌ Kiska naam daalna hai wo toh likh! Example: /setname AMIT`);
+      botInstance.sendMessage(chatId, `❌ Naam toh likh! Example: /setname AMIT`);
     }
   }
+  else if (text.startsWith('/setspam')) {
+    const spamInput = text.replace('/setspam', '').trim();
+    if (spamInput) {
+      customSpamText = spamInput;
+      botInstance.sendMessage(chatId, `✍️ Nayi custom spam script lock ho gayi!\n\n*Text:* ${customSpamText}`, { parse_mode: 'Markdown' });
+    } else {
+      botInstance.sendMessage(chatId, `❌ Khali command mat bhej! Script sath me likh.`);
+    }
+  }
+  else if (text === '/platform_whatsapp') {
+    activePlatform = 'whatsapp';
+    botInstance.sendMessage(chatId, `📱 Active Platform: *WHATSAPP (Sirf set kiye gaye number/group par)* 🟢`, { parse_mode: 'Markdown' });
+  }
+  else if (text === '/platform_instagram') {
+    activePlatform = 'instagram';
+    botInstance.sendMessage(chatId, `📸 Active Platform: *INSTAGRAM (Sirf set kiye gaye user/group par)* 🟣`, { parse_mode: 'Markdown' });
+  }
+  else if (text === '/platform_telegram') {
+    activePlatform = 'telegram';
+    botInstance.sendMessage(chatId, `✈️ Active Platform: *TELEGRAM (Sirf set kiye gaye group par)* 🔵`, { parse_mode: 'Markdown' });
+  }
   else if (text === '/spam') {
-    if (!targetNumber) {
-      bot.sendMessage(chatId, `❌ Pehle /settarget karke number set kar bhai!`);
+    // Safety check: Bina target set kiye spam start nahi hoga
+    if (activePlatform === 'whatsapp' && !targetWhatsApp) {
+      botInstance.sendMessage(chatId, `❌ Pehle /settarget karke WhatsApp target set kar bhai!`);
       return;
     }
-    
-    bot.sendMessage(chatId, `🚀 Dynamic Heavy Spam Shuru on Target: *${targetName}*!`);
+    if (activePlatform === 'telegram' && !targetTelegramChat) {
+      botInstance.sendMessage(chatId, `❌ Pehle /settgtarget karke Telegram group ID set kar bhai!`);
+      return;
+    }
+
+    botInstance.sendMessage(chatId, `🚀 Target Locked Spam Started!\n🎯 Target: *${targetName}*\n🌐 Platform: *${activePlatform.toUpperCase()}*`);
     if (currentSpamInterval) clearInterval(currentSpamInterval);
 
     let counter = 0;
-    // Super fast interval (0.4 seconds)
     currentSpamInterval = setInterval(async () => {
-      if (waSock && targetNumber) {
-        try {
-          // Dynamic templates se current target name ke sath message generate karna
-          const spamList = getSpamTemplates(targetName);
-          const selectedBlock = spamList[Math.floor(Math.random() * spamList.length)];
-          const finalMessage = `${selectedBlock}\n[Spam Count: ${counter++}]`;
+      try {
+        const spamList = getSpamTemplates(targetName);
+        const selectedBlock = spamList[Math.floor(Math.random() * spamList.length)];
+        const finalMessage = `${selectedBlock}\n[Spam Count: ${counter++}]`;
 
-          await waSock.sendMessage(targetNumber, { text: finalMessage });
-
-          // Har 10 message ke baad profile name bhi auto-change karega
-          if (counter % 10 === 0) {
-            const dynamicNames = ["Rupesh Don 👑", "Rupesh Hacker ⚡", "Rupesh King 🔥", "Rupesh Master 🚀"];
-            const nextName = dynamicNames[Math.floor(Math.random() * dynamicNames.length)];
-            await waSock.updateProfileName(nextName);
-          }
-        } catch (err) {
-          console.log('Spam error:', err);
+        // 1. WhatsApp Target Spam
+        if (activePlatform === 'whatsapp' && waSock && targetWhatsApp) {
+          await waSock.sendMessage(targetWhatsApp, { text: finalMessage }).catch(() => {});
         }
+
+        // 2. Telegram Target Group Spam
+        if (activePlatform === 'telegram' && targetTelegramChat) {
+          await botInstance.sendMessage(targetTelegramChat, finalMessage).catch(() => {});
+        }
+
+        // 3. Instagram Target Spam simulation
+        if (activePlatform === 'instagram') {
+          console.log(`[INSTAGRAM TARGET SPAM -> @${targetInstagramUser}]: ${finalMessage}`);
+        }
+
+        // Har 10 messages par WhatsApp Profile Name Heavy Rotation
+        if (counter % 10 === 0 && waSock) {
+          const heavyNameList = getHeavyNamePool(targetName);
+          const nextHeavyName = heavyNameList[Math.floor(Math.random() * heavyNameList.length)];
+          await waSock.updateProfileName(nextHeavyName).catch(() => {});
+        }
+      } catch (err) {
+        console.log('Spam execution error:', err);
       }
-    }, 400);
+    }, 450);
   }
   else if (text === '/stop') {
     if (currentSpamInterval) {
       clearInterval(currentSpamInterval);
       currentSpamInterval = null;
-      bot.sendMessage(chatId, `🛑 Spam rok diya gaya hai!`);
+      botInstance.sendMessage(chatId, `🛑 Spam successfully rok diya gaya hai!`);
     } else {
-      bot.sendMessage(chatId, `ℹ️ Koi spam chal nahi raha hai.`);
+      botInstance.sendMessage(chatId, `ℹ️ Koi spam active nahi hai.`);
     }
   }
   else if (text === '/status') {
-    const statusMsg = waSock?.user ? `🟢 Connected as: ${waSock.user.id}\n🎯 Current Target Name: ${targetName}` : `🔴 Disconnected / QR Scan Pending`;
-    bot.sendMessage(chatId, statusMsg);
+    const statusMsg = `📊 *Rupesh Bot Status* 📊\n\n` +
+                      `🟢 WhatsApp: ${waSock?.user ? 'Connected' : 'Disconnected'}\n` +
+                      `🌐 Active Platform: *${activePlatform.toUpperCase()}*\n` +
+                      `🎯 Target Name: *${targetName}*\n` +
+                      `📱 WA Target: ${targetWhatsApp || 'Not Set'}\n` +
+                      `✈️ TG Target Group: ${targetTelegramChat || 'Not Set'}\n` +
+                      `📸 Insta Target: @${targetInstagramUser}`;
+    botInstance.sendMessage(chatId, statusMsg, { parse_mode: 'Markdown' });
   }
-});
+  else if (text === '/logoutwa') {
+    if (chatId !== MAIN_ADMIN) {
+      botInstance.sendMessage(chatId, `❌ Only Main Admin can logout WhatsApp session!`);
+      return;
+    }
+    try {
+      if (waSock) await waSock.logout().catch(() => {});
+      if (fs.existsSync('auth_info_baileys')) fs.rmSync('auth_info_baileys', { recursive: true, force: true });
+      botInstance.sendMessage(chatId, `🔄 WhatsApp session clear! Naya QR code bheja ja raha hai...`);
+      startWhatsApp();
+    } catch (err) {
+      botInstance.sendMessage(chatId, `❌ Logout error: ${err.message}`);
+    }
+  }
+};
 
-// WhatsApp Connection Setup & Telegram QR Sender
+bot1.on('message', (msg) => handleBotCommands(bot1, msg));
+bot2.on('message', (msg) => handleBotCommands(bot2, msg));
+
 async function startWhatsApp() {
   const { state, saveCreds } = await useMultiFileAuthState('auth_info_baileys');
   waSock = makeWASocket({
@@ -116,30 +288,16 @@ async function startWhatsApp() {
   waSock.ev.on('creds.update', saveCreds);
   
   waSock.ev.on('connection.update', async (update) => {
-    const { connection, qr, lastDisconnect } = update;
-    
+    const { connection, qr } = update;
     if (qr && adminChatId) {
       try {
         const qrBuffer = await qrcode.toBuffer(qr);
-        await bot.sendPhoto(adminChatId, qrBuffer, { 
-          caption: '📱 Yeh lo WhatsApp QR! Telegram se hi scan kar le.' 
-        });
-      } catch (err) {
-        console.log('QR send error:', err);
-      }
+        await bot1.sendPhoto(adminChatId, qrBuffer, { caption: '📱 WhatsApp QR Code! Scan it.' }).catch(() => {});
+        await bot2.sendPhoto(adminChatId, qrBuffer, { caption: '📱 WhatsApp QR Code! Scan it.' }).catch(() => {});
+      } catch (err) {}
     }
-
-    if (connection === 'open') {
-      console.log('WhatsApp connected!');
-      if (adminChatId) {
-        bot.sendMessage(adminChatId, '🎉 WhatsApp successfully connect ho gaya bot ke sath!');
-      }
-    } else if (connection === 'close') {
-      const shouldReconnect = (lastDisconnect?.error)?.output?.statusCode !== DisconnectReason.loggedOut;
-      if (shouldReconnect) {
-        startWhatsApp();
-      }
-    }
+    if (connection === 'open') console.log('WhatsApp connected!');
+    else if (connection === 'close') startWhatsApp();
   });
 }
 
