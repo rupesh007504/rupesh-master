@@ -1,5 +1,5 @@
 {
-  "name": "rupesh-master",
+  "name": "master-bot",
   "version": "1.0.0",
   "description": "Multi-platform bot",
   "main": "master-bot.js",
@@ -7,7 +7,7 @@
     "start": "node master-bot.js"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "^6.7.5",
+    "@whiskeysockets/baileys": "^6.7.9",
     "node-telegram-bot-api": "^0.66.0",
     "pino": "^9.0.0",
     "qrcode": "^1.5.3"
