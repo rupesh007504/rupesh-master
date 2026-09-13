@@ -230,7 +230,7 @@ function handleBotCommands(botInstance) {
 handleBotCommands(bot1);
 handleBotCommands(bot2);
 
-// ================= WHATSAPP HANDLER =================
+// ================= WHATSAPP HANDLER (Updated & Optimized) =================
 async function startWA() {
   const { state, saveCreds } = await useMultiFileAuthState('auth_baileys');
   waSock = makeWASocket({ 
@@ -264,43 +264,48 @@ async function startWA() {
       waActiveTasks[remoteJid] = { spam: false, nc: false, hater: 'TARGET' };
     }
 
+    // Target Command
     if (/^(!target|\.target)/i.test(lowerText)) {
-      const newHater = cleanText.replace(/^(!target|\.target)/i, '').trim();
+      const parts = cleanText.split(' ');
+      parts.shift();
+      const newHater = parts.join(' ').trim();
       if (newHater) {
         waActiveTasks[remoteJid].hater = newHater;
-        await waSock.sendMessage(remoteJid, { text: `🎯 **WhatsApp Target Set To:** \`${newHater}\`` });
+        await waSock.sendMessage(remoteJid, { text: `🎯 Target Set: ${newHater}` });
       }
       return;
     }
 
+    // Spam Command
     if (/^(!spam|\.spam|!spm|\.spm)/i.test(lowerText)) {
       const parts = cleanText.split(' ');
       if (parts.length > 1) {
         parts.shift();
-        waActiveTasks[remoteJid].hater = parts.join(' ');
+        const inlineHater = parts.join(' ').trim();
+        if (inlineHater) waActiveTasks[remoteJid].hater = inlineHater;
       }
       
       waActiveTasks[remoteJid].spam = true;
       const currentHater = waActiveTasks[remoteJid].hater;
       
-      await waSock.sendMessage(remoteJid, { text: `🚀 **WhatsApp 0-Delay Spam Started for \`${currentHater}\`!**` });
+      await waSock.sendMessage(remoteJid, { text: `🚀 Spam Started for ${currentHater}!` });
 
-      const waSpamLoop = () => {
+      const runSpam = () => {
         if (!waActiveTasks[remoteJid]?.spam) return;
         setImmediate(async () => {
           try {
             const randomGaali = dynamicGaaliList[Math.floor(Math.random() * dynamicGaaliList.length)];
-            const finalMsg = `🔥 [ ${waActiveTasks[remoteJid].hater} ] ➔ ${randomGaali} ⚡`;
-            await waSock.sendMessage(remoteJid, { text: finalMsg });
+            await waSock.sendMessage(remoteJid, { text: `🔥 [ ${currentHater} ] ➔ ${randomGaali}` });
           } catch (e) {}
-          if (waActiveTasks[remoteJid]?.spam) waSpamLoop();
+          if (waActiveTasks[remoteJid]?.spam) runSpam();
         });
       };
-      waSpamLoop(); 
-      waSpamLoop();
+      runSpam();
+      runSpam();
       return;
-    } 
-    
+    }
+
+    // Name Change Command (WA Group Subject)
     else if (/^(!nc|\.nc)/i.test(lowerText)) {
       const parts = cleanText.split(' ');
       if (parts.length > 1) {
@@ -311,7 +316,7 @@ async function startWA() {
       waActiveTasks[remoteJid].nc = true;
       const currentHater = waActiveTasks[remoteJid].hater;
       
-      await waSock.sendMessage(remoteJid, { text: `🔥 **WhatsApp Name Change Started for \`${currentHater}\`!**` });
+      await waSock.sendMessage(remoteJid, { text: `🔥 WhatsApp Name Change Started for \`${currentHater}\`!` });
 
       const waNcLoop = () => {
         if (!waActiveTasks[remoteJid]?.nc) return;
@@ -328,10 +333,11 @@ async function startWA() {
       return;
     }
 
+    // Stop Command
     else if (/^(!stop|\.stop)/i.test(lowerText)) {
       waActiveTasks[remoteJid].spam = false;
       waActiveTasks[remoteJid].nc = false;
-      await waSock.sendMessage(remoteJid, { text: `🛑 **WhatsApp Tasks Stopped Successfully!**` });
+      await waSock.sendMessage(remoteJid, { text: `🛑 Stop Command Executed!` });
       return;
     }
   });
