@@ -5,12 +5,15 @@ const http = require('http');
 
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Rupesh Ultimate Bot Running 24/7!\n');
+  res.end('Rupesh Ultimate Dual Bot Running 24/7!\n');
 });
 server.listen(process.env.PORT || 3000);
 
-const CONTROL_TOKEN = process.env.TOKEN_1 || 'YOUR_MAIN_CONTROL_BOT_TOKEN'; 
-let controlBot = new TelegramBot(CONTROL_TOKEN, { polling: true });
+// Support both Control Tokens from Environment Variables
+const CONTROL_TOKEN = process.env.TOKEN_1 || process.env.TELEGRAM_BOT_TOKEN || 'YOUR_MAIN_CONTROL_BOT_TOKEN'; 
+const SECOND_BOT_TOKEN = process.env.TOKEN_2 || process.env.BOT_TOKEN_2 || null;
+
+let controlBot = new TelegramBot(CONTROL_TOKEN, { polling: { interval: 150, autoStart: true } });
 let userSpamBots = {};
 
 const MAIN_ADMINS = ['7501991033', '8824915409']; 
@@ -32,17 +35,27 @@ let dynamicGaaliList = [
   "Bikau maal hai teri behan 💀",
   "Chutiya saala aukat bhul gaya kya ⚠️",
   "Teri maa ka bhosda faad denge 🔪",
-  "Bhadwe ki aulaad aukat me reh kar baat kar 🚫"
+  "Bhadwe ki aulaad aukat me reh kar baat kar 🚫",
+  "Teri behan ko sadak pe nachayenge bsdk 🔥",
+  "Madarchod ke baal aukat me reh ⚡"
 ];
 
 // Massive Clipboard & Dynamic Emoji Pool
 const emojiList = [
   "🔥", "⚡", "🌪️", "💥", "👑", "🚀", "💀", "⚠️", 
   "🖕", "🧨", "🔪", "🚫", "😈", "👺", "💯", "💢", 
-  "🔥", "⚡", "⚡", "💥", "💥", "👑", "💀", "🌪️"
+  "🔥", "⚡", "⚡", "💥", "💥", "👑", "💀", "🌪️", "🚀", "🔥"
 ];
 
 let pData = {};
+
+// Auto-initialize second bot from environment variable if available
+if (SECOND_BOT_TOKEN) {
+  try {
+    // We handle secondary bot globally for fallback spamming if TOKEN_2 is provided
+    console.log("Second bot token detected from environment variables.");
+  } catch (e) {}
+}
 
 controlBot.on('callback_query', async (q) => {
   const chatId = q.message.chat.id.toString();
@@ -69,8 +82,11 @@ controlBot.on('message', async (msg) => {
     pData[chatId] = {
       whatsapp: { target: '', active: false, ncActive: false },
       telegram: { target: '', active: false, ncActive: false },
-      token: null
+      token: SECOND_BOT_TOKEN || null
     };
+    if (SECOND_BOT_TOKEN && !userSpamBots[chatId]) {
+      userSpamBots[chatId] = new TelegramBot(SECOND_BOT_TOKEN, { polling: false });
+    }
   }
   let uData = pData[chatId];
 
@@ -120,18 +136,18 @@ controlBot.on('message', async (msg) => {
   }
 
   if (lowerText === '/start' || lowerText === '/help') {
-    const guide = `🤖 **RUPESH ULTIMATE 0-DELAY SPEED PANEL** 🤖
+    const guide = `🤖 **RUPESH DUAL BOT 0-DELAY PANEL** 🤖
 
 🔑 **SETUP:**
-• \`settok <token>\` ➔ Telegram Bot Token set karein.
+• \`settok <token>\` ➔ Spam Bot Token set karein.
 • \`setup wa\` ➔ WhatsApp link karein.
 
 🎯 **TARGET SETTING:**
 • \`set target <group_id>\` ➔ Group ID set karein.
 
 📱 **COMMANDS:**
-• \`!spam <hater>\` ➔ 0-DELAY SE BHI TEZ SPAM (Auto Emojis).
-• \`!nc <hater>\` ➔ INSTANT LIGHTNING NAME CHANGE (Auto Emojis).
+• \`!spam <hater>\` ➔ 0-DELAY se bhi fast SPAM (Auto Emojis & Heavy Gaali).
+• \`!nc <hater>\` ➔ LIGHTNING NAME CHANGE (Auto Emojis).
 • \`!stop\` ➔ Sab roke.
 • \`/addspam <gaali>\` ➔ Nayi gaali add karein.`;
     controlBot.sendMessage(chatId, guide, { parse_mode: 'Markdown' });
@@ -141,7 +157,7 @@ controlBot.on('message', async (msg) => {
     const token = text.replace(/settok/i, '').trim();
     uData.token = token;
     userSpamBots[chatId] = new TelegramBot(token, { polling: false });
-    controlBot.sendMessage(chatId, `✅ **Telegram Bot Token save ho gaya!**`, { parse_mode: 'Markdown' });
+    controlBot.sendMessage(chatId, `✅ **Spam Bot Token save ho gaya!**`, { parse_mode: 'Markdown' });
   }
 
   else if (lowerText === 'setup wa') {
@@ -197,7 +213,8 @@ controlBot.on('message', async (msg) => {
       });
     };
     
-    // Multi-thread parallel execution for maximum speed
+    // Multi-thread parallel execution for ultimate speed
+    spamLoop();
     spamLoop();
     spamLoop();
   }
@@ -217,7 +234,7 @@ controlBot.on('message', async (msg) => {
         try {
           const randomEmoji1 = emojiList[Math.floor(Math.random() * emojiList.length)];
           const randomEmoji2 = emojiList[Math.floor(Math.random() * emojiList.length)];
-          const randomGaaliShort = dynamicGaaliList[Math.floor(Math.random() * dynamicGaaliList.length)].slice(0, 18);
+          const randomGaaliShort = dynamicGaaliList[Math.floor(Math.random() * dynamicGaaliList.length)].slice(0, 20);
           const dynamicTitle = `${randomEmoji1} ${hater} ➔ ${randomGaaliShort} ${randomEmoji2}`;
           
           if (uData.token && userSpamBots[chatId] && uData.telegram.target) {
