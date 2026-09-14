@@ -18,7 +18,14 @@ let igClient = null;
 let userState = {};
 let activeTasks = {};
 
-// Tere saare diye hue custom spam aur gaali database
+// Platform speed configuration
+let speedConfig = {
+  WA: 'fast',
+  IG: 'fast',
+  TG: 'fast'
+};
+
+// Tere saare original custom spam aur gaali database
 let spamList = [
   "⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭",
   "🌙𒈒 (alpha ke hater) 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨",
@@ -36,7 +43,7 @@ function isAdmin(msg) {
   return ADMINS.has(String(msg.from?.id));
 }
 
-// ================= 1. WHATSAPP ULTRA-FAST ENGINE =================
+// ================= 1. WHATSAPP ENGINE (PAIRING FIXED) =================
 async function startWhatsApp() {
   const authFolder = 'auth_baileys';
   const { state, saveCreds } = await useMultiFileAuthState(authFolder);
@@ -45,7 +52,8 @@ async function startWhatsApp() {
     logger: pino({ level: 'silent' }),
     auth: state,
     printQRInTerminal: false,
-    browser: Browsers.macOS('Desktop')
+    // Updated browser settings to fix "Couldn't link device" error
+    browser: Browsers.appropriate('Chrome')
   });
 
   waSock.ev.on('creds.update', saveCreds);
@@ -60,6 +68,8 @@ async function startWhatsApp() {
         try { fs.rmSync(authFolder, { recursive: true, force: true }); } catch(e){}
         setTimeout(() => startWhatsApp(), 3000);
       }
+    } else if (connection === 'open') {
+      console.log('✅ WhatsApp Connected Successfully!');
     }
   });
 
@@ -73,7 +83,7 @@ async function startWhatsApp() {
     const lower = cleanText.toLowerCase();
 
     if (!activeTasks[jid]) {
-      activeTasks[jid] = { spam: false, nc: false, hater: 'TARGET', speedMode: 'fast' };
+      activeTasks[jid] = { spam: false, nc: false, hater: 'TARGET' };
     }
 
     if (lower.startsWith('!target') || lower.startsWith('.target')) {
@@ -92,8 +102,8 @@ async function startWhatsApp() {
       if (parts[1]) {
         const spd = parts[1].toLowerCase();
         if (spd === 'slow' || spd === 'normal' || spd === 'fast') {
-          activeTasks[jid].speedMode = spd;
-          await waSock.sendMessage(jid, { text: `⚡ Speed updated to: ${spd}` });
+          speedConfig.WA = spd;
+          await waSock.sendMessage(jid, { text: `⚡ WhatsApp Speed updated to: ${spd}` });
         }
       }
       return;
@@ -110,11 +120,11 @@ async function startWhatsApp() {
 
       activeTasks[jid].spam = true;
       const haterName = activeTasks[jid].hater;
-      await waSock.sendMessage(jid, { text: `🚀 RUPESH WA SPAM STARTED (${activeTasks[jid].speedMode}) for ${haterName}!` });
+      await waSock.sendMessage(jid, { text: `🚀 RUPESH WA SPAM STARTED (${speedConfig.WA}) for ${haterName}!` });
 
       const runSpamLoop = () => {
         if (!activeTasks[jid]?.spam) return;
-        const delay = activeTasks[jid].speedMode === 'slow' ? 1500 : (activeTasks[jid].speedMode === 'normal' ? 500 : 0);
+        const delay = speedConfig.WA === 'slow' ? 1500 : (speedConfig.WA === 'normal' ? 500 : 0);
         
         setTimeout(async () => {
           if (!activeTasks[jid]?.spam) return;
@@ -127,7 +137,7 @@ async function startWhatsApp() {
       };
 
       runSpamLoop();
-      if (activeTasks[jid].speedMode === 'fast') {
+      if (speedConfig.WA === 'fast') {
         runSpamLoop(); // Multi-thread for ultra-fast speed
       }
       return;
@@ -233,30 +243,51 @@ function createBot(token, name) {
     if (!isAdmin(msg)) return;
 
     bot.sendMessage(msg.chat.id, `
-📱 WHATSAPP COMMANDS (Use in GC)
-• \`!spam <target>\` - Flood Spam
-• \`!nc <target>\` - Fast Name Change
-• \`!target <name>\` - Set Target
-• \`!speed <slow|normal|fast>\` - Adjust Speed
-• \`!stop\` - Stop ongoing tasks
+📱 MAIN COMMANDS LIST
+• \`/wa_commands\` - WhatsApp specific commands
+• \`/ig_commands\` - Instagram specific commands
+• \`/tg_commands\` - Telegram specific commands
+• \`/status\` - System check
+• \`/admins\` - View admins list
+• \`/spamlist\` - View loaded spam database
+`);
+  });
 
-✈️ TELEGRAM & GENERAL COMMANDS
-• \`/wa_speed <slow|normal|fast>\`
-• \`/tg_speed <slow|normal|fast>\`
-• \`/ig_speed <slow|normal|fast>\`
-• \`/addspam <text>\`
-• \`/spamlist\`
+  bot.onText(/^\/wa_commands$/, msg => {
+    if (!isAdmin(msg)) return;
+    bot.sendMessage(msg.chat.id, `
+📱 WHATSAPP COMMANDS (Use inside GC):
+• \`!spam <target>\` - Start Spam Flood
+• \`!nc <target>\` - Fast Name Change Loop
+• \`!target <name>\` - Set Target Name
+• \`!speed <slow|normal|fast>\` - Set Speed
+• \`!stop\` - Stop active tasks
+`);
+  });
 
-👑 ADMIN MANAGEMENT
-/addadmin <telegram_id>
-/removeadmin <telegram_id>
-/admins
+  bot.onText(/^\/ig_commands$/, msg => {
+    if (!isAdmin(msg)) return;
+    bot.sendMessage(msg.chat.id, `
+📸 INSTAGRAM COMMANDS:
+• \`/ig_connect\` - Connect info
+• \`/ig_status\` - Check login status
+• \`/ig_speed <slow|normal|fast>\` - Set IG Speed
+`);
+  });
+
+  bot.onText(/^\/tg_commands$/, msg => {
+    if (!isAdmin(msg)) return;
+    bot.sendMessage(msg.chat.id, `
+✈️ TELEGRAM COMMANDS (Use inside GC):
+• \`!spam <target>\` - Telegram High-Speed Spam
+• \`!stop\` - Stop Telegram tasks
+• \`/tg_speed <slow|normal|fast>\` - Set TG Speed
 `);
   });
 
   bot.onText(/^\/status$/, msg => {
     if (!isAdmin(msg)) return;
-    bot.sendMessage(msg.chat.id, `✅ Control bot ${name} online\n🕐 ${new Date().toISOString()}`);
+    bot.sendMessage(msg.chat.id, `✅ Control bot ${name} online\n🕐 ${new Date().toISOString()}\n🚀 Speeds -> WA: ${speedConfig.WA} | TG: ${speedConfig.TG} | IG: ${speedConfig.IG}`);
   });
 
   bot.onText(/^\/admins$/, msg => {
@@ -291,11 +322,18 @@ function createBot(token, name) {
     bot.sendMessage(msg.chat.id, `📱 WhatsApp Status: ${status}`);
   });
 
-  bot.onText(/^\/(wa|tg|ig)_speed\s+(slow|normal|fast)$/, msg => {
+  bot.onText(/^\/(wa|tg|ig)_speed(?:\s+(slow|normal|fast))?$/i, msg => {
     if (!isAdmin(msg)) return;
     const platform = msg.match[1].toUpperCase();
     const speed = msg.match[2];
-    bot.sendMessage(msg.chat.id, `⚡ ${platform} Speed successfully changed to: ${speed}`);
+    
+    if (!speed) {
+      bot.sendMessage(msg.chat.id, `⚡ Current ${platform} Speed is: **${speedConfig[platform]}**\nTo change use: \`/${platform.toLowerCase()}_speed <slow|normal|fast>\``, { parse_mode: 'Markdown' });
+      return;
+    }
+
+    speedConfig[platform] = speed.toLowerCase();
+    bot.sendMessage(msg.chat.id, `⚡ ${platform} Speed successfully changed to: ${speed.toLowerCase()}`);
   });
 
   bot.onText(/^\/ig_connect$/, msg => {
@@ -340,7 +378,7 @@ function createBot(token, name) {
           }
         }, 3000);
       } catch (e) {
-        bot.sendMessage(chatId, `❌ Error: ${e.message}`);
+        bot.sendMessage(botAdmin = chatId, `❌ Error: ${e.message}`);
       }
       return;
     }
@@ -355,7 +393,7 @@ function createBot(token, name) {
     }
 
     if (!activeTasks[chatId]) {
-      activeTasks[chatId] = { spam: false, hater: 'TARGET', speedMode: 'fast' };
+      activeTasks[chatId] = { spam: false, hater: 'TARGET' };
     }
 
     if (lower.startsWith('!spam')) {
@@ -366,11 +404,11 @@ function createBot(token, name) {
       }
       activeTasks[chatId].spam = true;
       const hater = activeTasks[chatId].hater;
-      bot.sendMessage(chatId, `🚀 Telegram Spam Started (${activeTasks[chatId].speedMode}) for ${hater}!`);
+      bot.sendMessage(chatId, `🚀 Telegram Spam Started (${speedConfig.TG}) for ${hater}!`);
 
       const runTgSpam = () => {
         if (!activeTasks[chatId]?.spam) return;
-        const delay = activeTasks[chatId].speedMode === 'slow' ? 1500 : (activeTasks[chatId].speedMode === 'normal' ? 500 : 50);
+        const delay = speedConfig.TG === 'slow' ? 1500 : (speedConfig.TG === 'normal' ? 500 : 50);
 
         setTimeout(() => {
           if (!activeTasks[chatId]?.spam) return;
