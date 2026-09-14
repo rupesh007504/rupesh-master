@@ -6,7 +6,7 @@ const http = require('http');
 
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Rupesh Ultimate Multi-Platform System Running 24/7 on Cloud!\n');
+  res.end('Rupesh Ultimate Multi-Platform System Running 24/7!\n');
 });
 server.listen(process.env.PORT || 3000);
 
@@ -153,13 +153,14 @@ function handleBotCommands(botInstance) {
     }
 
     if (lowerText === '/start' || lowerText === '/help') {
-      const guide = `🤖 **RUPESH CLOUD BOT PANEL** 🤖
+      const guide = `🤖 **RUPESH ULTIMATE BOT PANEL** 🤖
 • \`setup wa\` ➔ WhatsApp Link karein (Pairing Code)
 • \`setup ig\` ➔ Instagram Login karein
 • \`/addspam <gaali>\` ➔ Script me nayi gaali add karein
 • \`set target <chat_id>\` ➔ Telegram Chat ID Set karein
 • \`!target / .target <name>\` ➔ Target/Hater Name Set karein
-• \`!spam / .spam / !spm / .spm\` ➔ Spam Shuru karein`;
+• \`!spam / .spam / !spm / .spm\` ➔ Spam Shuru karein
+• \`!nc / .nc\` ➔ Name Change Shuru karein`;
       botInstance.sendMessage(chatId, guide, { parse_mode: 'Markdown' });
     }
 
@@ -230,24 +231,31 @@ function handleBotCommands(botInstance) {
 handleBotCommands(bot1);
 handleBotCommands(bot2);
 
-// ================= WHATSAPP HANDLER (Cloud Optimized) =================
+// ================= WHATSAPP HANDLER (Fixed Linking & Pairing) =================
 async function startWA() {
   const { state, saveCreds } = await useMultiFileAuthState('auth_baileys');
   waSock = makeWASocket({ 
     logger: pino({ level: 'silent' }), 
     auth: state, 
     printQRInTerminal: false,
-    browser: ['Ubuntu', 'Chrome', '22.04.4'] 
+    browser: ['Chrome', 'Desktop', '10.15'] 
   });
   
   waSock.ev.on('creds.update', saveCreds);
+  
   waSock.ev.on('connection.update', (update) => {
     const { connection, lastDisconnect } = update;
     if (connection === 'open') {
-      console.log('✅ WhatsApp Connected Successfully on Cloud!');
+      console.log('✅ WhatsApp Connected & Linked Successfully!');
     } else if (connection === 'close') {
-      const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
-      if (shouldReconnect) setTimeout(() => startWA(), 3000);
+      const statusCode = lastDisconnect?.error?.output?.statusCode;
+      const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
+      console.log(`⚠️ WhatsApp Connection Closed due to: ${lastDisconnect?.error?.message}, Reconnecting: ${shouldReconnect}`);
+      if (shouldReconnect) {
+        setTimeout(() => startWA(), 3000);
+      } else {
+        console.log('❌ WhatsApp Logged Out! Please re-link using setup wa.');
+      }
     }
   });
 
@@ -270,6 +278,7 @@ async function startWA() {
       waActiveTasks[remoteJid] = { spam: false, nc: false, hater: 'TARGET' };
     }
 
+    // Target Command
     if (/^(!target|\.target)/i.test(lowerText)) {
       const parts = cleanText.split(' ');
       parts.shift();
@@ -281,6 +290,7 @@ async function startWA() {
       return;
     }
 
+    // Spam Command
     if (/^(!spam|\.spam|!spm|\.spm)/i.test(lowerText)) {
       const parts = cleanText.split(' ');
       if (parts.length > 1) {
@@ -309,6 +319,7 @@ async function startWA() {
       return;
     }
 
+    // Name Change Command
     if (/^(!nc|\.nc)/i.test(lowerText)) {
       const parts = cleanText.split(' ');
       if (parts.length > 1) {
@@ -336,6 +347,7 @@ async function startWA() {
       return;
     }
 
+    // Stop Command
     if (lowerText === '!stop' || lowerText === '.stop') {
       waActiveTasks[remoteJid].spam = false;
       waActiveTasks[remoteJid].nc = false;
