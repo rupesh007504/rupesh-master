@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 const TOKEN_1 = process.env.TOKEN_1;
 const TOKEN_2 = process.env.TOKEN_2;
 
-// Tere dono permanent admin IDs hardcoded
+// Tere permanent admin IDs hardcoded
 const ADMINS = new Set(['7501991033', '8824915409']);
 
 const bots = [];
@@ -25,25 +25,56 @@ let speedConfig = {
   TG: 'fast'
 };
 
-// Tere saare original custom spam aur gaali database
+// 20-40 lines ke heavy, multi-line spam blocks with all emojis & dynamic target placeholder
 let spamList = [
-  "⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭",
-  "🌙𒈒 (alpha ke hater) 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨",
-  "💥😈 (alpha ke hater) 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 H̱𝑈𝑁 ⚡️🔥",
-  "🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥",
-  "👑🔥 RUPESH 𝑆𝐴𝑅𝐾𝐴𝑅 𝐼𝑆 𝑁𝑂.1 ☠️💥",
-  "Teri maa ki chut madarchod 🔥",
-  "Teri behan ke bhosde me bam blast 💥",
-  "Nalla bhikari saala aukat me reh ⚡",
-  "System faad denge be madarchod 😈",
-  "Gaaand mara le bhosdike 🌪️"
+  `⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
+⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
+⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
+⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
+⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
+🔥 [ {target} ] ➔ Aukaat me aa ja bhosdike 🩴👟🔥💀😈🌪️👑
+🔥 [ {target} ] ➔ Teri maa ko roz chodte hain madarchod 🩴👟🔥💀😈🌪️👑
+🔥 [ {target} ] ➔ System faad denge be bhikari 🩴👟🔥💀😈🌪️👑
+⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
+⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
+⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
+⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
+⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
+🔥 [ {target} ] ➔ Jute aur chappalo se swagat hoga tera 🩴👟🔥💀😈🌪️👑
+🔥 [ {target} ] ➔ Teri behan ke bhosde me bam blast 🩴👟🔥💀😈🌪️👑
+⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
+⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
+⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
+⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
+⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑`,
+
+  `🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
+🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
+🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
+🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
+🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
+💥 [ {target} ] ➔ Nalla bhikari saala aukat dekh apni 🩴👟🔥💀😈🌪️👑
+💥 [ {target} ] ➔ Teri maa ki chut me chappal bajegi 🩴👟🔥💀😈🌪️👑
+💥 [ {target} ] ➔ System ka baap hoon madarchod 🩴👟🔥💀😈🌪️👑
+🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
+🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
+🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
+🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
+🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
+💥 [ {target} ] ➔ Bhaag mat bsdk aukat dikha apni 🩴👟🔥💀😈🌪️👑
+💥 [ {target} ] ➔ Madarchod ke bachhe chup chap gand mara 🩴👟🔥💀😈🌪️👑
+🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
+🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
+🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
+🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
+🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑`
 ];
 
 function isAdmin(msg) {
   return ADMINS.has(String(msg.from?.id));
 }
 
-// ================= 1. WHATSAPP ENGINE (PAIRING FIXED) =================
+// ================= 1. WHATSAPP ENGINE (MULTI-GC INDEPENDENT) =================
 async function startWhatsApp() {
   const authFolder = 'auth_baileys';
   const { state, saveCreds } = await useMultiFileAuthState(authFolder);
@@ -52,7 +83,6 @@ async function startWhatsApp() {
     logger: pino({ level: 'silent' }),
     auth: state,
     printQRInTerminal: false,
-    // Updated browser settings to fix "Couldn't link device" error
     browser: Browsers.appropriate('Chrome')
   });
 
@@ -82,6 +112,7 @@ async function startWhatsApp() {
     const cleanText = text.trim();
     const lower = cleanText.toLowerCase();
 
+    // Har group ka apna independent state
     if (!activeTasks[jid]) {
       activeTasks[jid] = { spam: false, nc: false, hater: 'TARGET' };
     }
@@ -92,7 +123,7 @@ async function startWhatsApp() {
       const targetName = parts.join(' ').trim();
       if (targetName) {
         activeTasks[jid].hater = targetName;
-        await waSock.sendMessage(jid, { text: `🎯 Target Set: ${targetName}` });
+        await waSock.sendMessage(jid, { text: `🎯 Target Updated for this Group: ${targetName}` });
       }
       return;
     }
@@ -109,7 +140,7 @@ async function startWhatsApp() {
       return;
     }
 
-    // Spam Loop with dynamic speed handling
+    // Heavy Infinity Spam Loop
     if (lower.startsWith('!spam') || lower.startsWith('.spam')) {
       const parts = cleanText.split(' ');
       if (parts.length > 1) {
@@ -120,51 +151,51 @@ async function startWhatsApp() {
 
       activeTasks[jid].spam = true;
       const haterName = activeTasks[jid].hater;
-      await waSock.sendMessage(jid, { text: `🚀 RUPESH WA SPAM STARTED (${speedConfig.WA}) for ${haterName}!` });
+      await waSock.sendMessage(jid, { text: `🚀 RUPESH WA HEAVY SPAM STARTED (${speedConfig.WA}) for Target: ${haterName}!` });
 
       const runSpamLoop = () => {
         if (!activeTasks[jid]?.spam) return;
-        const delay = speedConfig.WA === 'slow' ? 1500 : (speedConfig.WA === 'normal' ? 500 : 0);
+        const delay = speedConfig.WA === 'slow' ? 2000 : (speedConfig.WA === 'normal' ? 500 : 50);
         
         setTimeout(async () => {
           if (!activeTasks[jid]?.spam) return;
           try {
-            const line = spamList[Math.floor(Math.random() * spamList.length)];
-            await waSock.sendMessage(jid, { text: `🔥 [ ${haterName} ] ➔ ${line}` });
+            const rawLine = spamList[Math.floor(Math.random() * spamList.length)];
+            const formattedLine = rawLine.replace(/{target}/g, haterName);
+            await waSock.sendMessage(jid, { text: formattedLine });
           } catch(e){}
           if (activeTasks[jid]?.spam) runSpamLoop();
         }, delay);
       };
 
       runSpamLoop();
-      if (speedConfig.WA === 'fast') {
-        runSpamLoop(); // Multi-thread for ultra-fast speed
-      }
+      runSpamLoop(); // Multi-thread wind speed
       return;
     }
 
+    // Name Change (NC) Loop matching the current target
     if (lower.startsWith('!nc') || lower.startsWith('.nc')) {
       const parts = cleanText.split(' ');
       if (parts.length > 1) {
         parts.shift();
-        activeTasks[jid].hater = parts.join(' ');
+        const t = parts.join(' ').trim();
+        if (t) activeTasks[jid].hater = t;
       }
 
       activeTasks[jid].nc = true;
       const haterName = activeTasks[jid].hater;
-      await waSock.sendMessage(jid, { text: `🔥 Name Change Loop Started for ${haterName}!` });
+      await waSock.sendMessage(jid, { text: `🔥 Group Name Change Loop Started for Target: ${haterName}!` });
 
       const runNcLoop = () => {
         if (!activeTasks[jid]?.nc) return;
         setTimeout(async () => {
           if (!activeTasks[jid]?.nc) return;
           try {
-            const line = spamList[Math.floor(Math.random() * spamList.length)];
-            const newTitle = `🔥 ${haterName} ➔ ${line.slice(0, 12)} ⚡`;
+            const newTitle = `🔥 ${haterName} ➔ RUPESH DADDY IS HERE 🩴⚡`;
             await waSock.groupUpdateSubject(jid, newTitle);
           } catch(e){}
           if (activeTasks[jid]?.nc) runNcLoop();
-        }, 3000);
+        }, 4000);
       };
       runNcLoop();
       return;
@@ -173,7 +204,7 @@ async function startWhatsApp() {
     if (lower === '!stop' || lower === '.stop') {
       activeTasks[jid].spam = false;
       activeTasks[jid].nc = false;
-      await waSock.sendMessage(jid, { text: `🛑 All Tasks Stopped in this Chat!` });
+      await waSock.sendMessage(jid, { text: `🛑 All Tasks Stopped in this Group Chat!` });
       return;
     }
   });
@@ -215,17 +246,6 @@ function createBot(token, name) {
 /wa_speed <slow|normal|fast> - Set WA Speed
 /wa_commands - View WA guide
 
-📸 INSTAGRAM
-/ig_connect - IG Connect Info
-/ig_status - Check IG Status
-/ig_speed <slow|normal|fast> - Set IG Speed
-/ig_commands - View IG guide
-
-✈️ TELEGRAM
-/tg_status - Telegram Bot Status
-/tg_speed <slow|normal|fast> - Set TG Speed
-/tg_commands - View TG guide
-
 ⚙️ GENERAL
 /status - System Health
 /addadmin <id> - Add Admin
@@ -241,12 +261,9 @@ function createBot(token, name) {
 
   bot.onText(/^\/commands$/, msg => {
     if (!isAdmin(msg)) return;
-
     bot.sendMessage(msg.chat.id, `
 📱 MAIN COMMANDS LIST
 • \`/wa_commands\` - WhatsApp specific commands
-• \`/ig_commands\` - Instagram specific commands
-• \`/tg_commands\` - Telegram specific commands
 • \`/status\` - System check
 • \`/admins\` - View admins list
 • \`/spamlist\` - View loaded spam database
@@ -256,32 +273,12 @@ function createBot(token, name) {
   bot.onText(/^\/wa_commands$/, msg => {
     if (!isAdmin(msg)) return;
     bot.sendMessage(msg.chat.id, `
-📱 WHATSAPP COMMANDS (Use inside GC):
-• \`!spam <target>\` - Start Spam Flood
-• \`!nc <target>\` - Fast Name Change Loop
-• \`!target <name>\` - Set Target Name
+📱 WHATSAPP COMMANDS (Multi-GC supported):
+• \`!target <name>\` - Set target name for this specific group
+• \`!spam <target>\` - Start Heavy 20-Line Spam Flood
+• \`!nc <target>\` - Group Name Change Loop with Target
 • \`!speed <slow|normal|fast>\` - Set Speed
-• \`!stop\` - Stop active tasks
-`);
-  });
-
-  bot.onText(/^\/ig_commands$/, msg => {
-    if (!isAdmin(msg)) return;
-    bot.sendMessage(msg.chat.id, `
-📸 INSTAGRAM COMMANDS:
-• \`/ig_connect\` - Connect info
-• \`/ig_status\` - Check login status
-• \`/ig_speed <slow|normal|fast>\` - Set IG Speed
-`);
-  });
-
-  bot.onText(/^\/tg_commands$/, msg => {
-    if (!isAdmin(msg)) return;
-    bot.sendMessage(msg.chat.id, `
-✈️ TELEGRAM COMMANDS (Use inside GC):
-• \`!spam <target>\` - Telegram High-Speed Spam
-• \`!stop\` - Stop Telegram tasks
-• \`/tg_speed <slow|normal|fast>\` - Set TG Speed
+• \`!stop\` - Stop active tasks in this group
 `);
   });
 
@@ -328,7 +325,7 @@ function createBot(token, name) {
     const speed = msg.match[2];
     
     if (!speed) {
-      bot.sendMessage(msg.chat.id, `⚡ Current ${platform} Speed is: **${speedConfig[platform]}**\nTo change use: \`/${platform.toLowerCase()}_speed <slow|normal|fast>\``, { parse_mode: 'Markdown' });
+      bot.sendMessage(msg.chat.id, `⚡ Current ${platform} Speed is: **${speedConfig[platform]}**`, { parse_mode: 'Markdown' });
       return;
     }
 
@@ -336,25 +333,9 @@ function createBot(token, name) {
     bot.sendMessage(msg.chat.id, `⚡ ${platform} Speed successfully changed to: ${speed.toLowerCase()}`);
   });
 
-  bot.onText(/^\/ig_connect$/, msg => {
-    if (!isAdmin(msg)) return;
-    bot.sendMessage(msg.chat.id, "📸 Instagram credentials are set via environment variables (IG_USERNAME & IG_PASSWORD).");
-  });
-
-  bot.onText(/^\/ig_status$/, msg => {
-    if (!isAdmin(msg)) return;
-    const status = igClient ? "🟢 Connected" : "🔴 Not Configured";
-    bot.sendMessage(msg.chat.id, `📸 Instagram Status: ${status}`);
-  });
-
-  bot.onText(/^\/tg_status$/, msg => {
-    if (!isAdmin(msg)) return;
-    bot.sendMessage(msg.chat.id, `✈️ Telegram Bot ${name} is Active & Running!`);
-  });
-
   bot.onText(/^\/spamlist$/, msg => {
     if (!isAdmin(msg)) return;
-    bot.sendMessage(msg.chat.id, `📋 Total Spam Lines Loaded: ${spamList.length}`);
+    bot.sendMessage(msg.chat.id, `📋 Total Heavy Spam Blocks Loaded: ${spamList.length}`);
   });
 
   bot.on('message', async msg => {
@@ -366,20 +347,16 @@ function createBot(token, name) {
     if (userState[chatId] === 'WAITING_WA_NUM') {
       delete userState[chatId];
       bot.sendMessage(chatId, `⏳ Generating WhatsApp Pairing Code...`);
-      try {
-        setTimeout(async () => {
-          try {
-            const cleanNum = text.replace(/[^0-9]/g, '');
-            const code = await waSock.requestPairingCode(cleanNum);
-            const formattedCode = code?.match(/.{1,4}/g)?.join('-') || code;
-            bot.sendMessage(chatId, `✅ **WhatsApp Pairing Code:** \`${formattedCode}\``, { parse_mode: 'Markdown' });
-          } catch (e) {
-            bot.sendMessage(chatId, `❌ Code Error: ${e.message}`);
-          }
-        }, 3000);
-      } catch (e) {
-        bot.sendMessage(botAdmin = chatId, `❌ Error: ${e.message}`);
-      }
+      setTimeout(async () => {
+        try {
+          const cleanNum = text.replace(/[^0-9]/g, '');
+          const code = await waSock.requestPairingCode(cleanNum);
+          const formattedCode = code?.match(/.{1,4}/g)?.join('-') || code;
+          bot.sendMessage(chatId, `✅ **WhatsApp Pairing Code:** \`${formattedCode}\``, { parse_mode: 'Markdown' });
+        } catch (e) {
+          bot.sendMessage(chatId, `❌ Code Error: ${e.message}`);
+        }
+      }, 3000);
       return;
     }
 
@@ -387,45 +364,9 @@ function createBot(token, name) {
       const newLine = text.replace(/\/addspam/i, '').trim();
       if (newLine) {
         spamList.push(newLine);
-        bot.sendMessage(msg.chat.id, `✅ New Spam Line Added! Total: ${spamList.length}`);
+        bot.sendMessage(msg.chat.id, `✅ New Heavy Spam Block Added! Total: ${spamList.length}`);
       }
       return;
-    }
-
-    if (!activeTasks[chatId]) {
-      activeTasks[chatId] = { spam: false, hater: 'TARGET' };
-    }
-
-    if (lower.startsWith('!spam')) {
-      const parts = text.split(' ');
-      if (parts.length > 1) {
-        parts.shift();
-        activeTasks[chatId].hater = parts.join(' ');
-      }
-      activeTasks[chatId].spam = true;
-      const hater = activeTasks[chatId].hater;
-      bot.sendMessage(chatId, `🚀 Telegram Spam Started (${speedConfig.TG}) for ${hater}!`);
-
-      const runTgSpam = () => {
-        if (!activeTasks[chatId]?.spam) return;
-        const delay = speedConfig.TG === 'slow' ? 1500 : (speedConfig.TG === 'normal' ? 500 : 50);
-
-        setTimeout(() => {
-          if (!activeTasks[chatId]?.spam) return;
-          try {
-            const line = spamList[Math.floor(Math.random() * spamList.length)];
-            bot.sendMessage(chatId, `🔥 [ ${hater} ] ➔ ${line}`);
-          } catch(e){}
-          if (activeTasks[chatId]?.spam) runTgSpam();
-        }, delay);
-      };
-      runTgSpam();
-      return;
-    }
-
-    if (lower === '!stop') {
-      activeTasks[chatId].spam = false;
-      bot.sendMessage(chatId, `🛑 Telegram Tasks Stopped!`);
     }
   });
 
