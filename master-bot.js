@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 const TOKEN_1 = process.env.TOKEN_1;
 const TOKEN_2 = process.env.TOKEN_2;
 
-// Tere permanent admin IDs hardcoded
+// Permanent admin IDs hardcoded
 const ADMINS = new Set(['7501991033', '8824915409']);
 
 const bots = [];
@@ -25,56 +25,146 @@ let speedConfig = {
   TG: 'fast'
 };
 
-// 20-40 lines ke heavy, multi-line spam blocks with all emojis & dynamic target placeholder
+// All 6 Independent Spam Blocks Separately Added
 let spamList = [
-  `⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
-⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
-⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
-⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
-⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
-🔥 [ {target} ] ➔ Aukaat me aa ja bhosdike 🩴👟🔥💀😈🌪️👑
-🔥 [ {target} ] ➔ Teri maa ko roz chodte hain madarchod 🩴👟🔥💀😈🌪️👑
-🔥 [ {target} ] ➔ System faad denge be bhikari 🩴👟🔥💀😈🌪️👑
-⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
-⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
-⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
-⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
-⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
-🔥 [ {target} ] ➔ Jute aur chappalo se swagat hoga tera 🩴👟🔥💀😈🌪️👑
-🔥 [ {target} ] ➔ Teri behan ke bhosde me bam blast 🩴👟🔥💀😈🌪️👑
-⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
-⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
-⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
-⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑
-⚡️🖤 RUPESH 𝐃𝐀𝐃𝐃𝐘 𝐈s 𝐇ᴇʀᴇ 💫🎭 🩴👟🔥💀😈🌪️👑`,
+  // Block 1: Daddy Is Here style
+  `🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭
+🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭`,
 
-  `🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
-🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
-🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
-🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
-🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
-💥 [ {target} ] ➔ Nalla bhikari saala aukat dekh apni 🩴👟🔥💀😈🌪️👑
-💥 [ {target} ] ➔ Teri maa ki chut me chappal bajegi 🩴👟🔥💀😈🌪️👑
-💥 [ {target} ] ➔ System ka baap hoon madarchod 🩴👟🔥💀😈🌪️👑
-🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
-🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
-🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
-🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
-🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
-💥 [ {target} ] ➔ Bhaag mat bsdk aukat dikha apni 🩴👟🔥💀😈🌪️👑
-💥 [ {target} ] ➔ Madarchod ke bachhe chup chap gand mara 🩴👟🔥💀😈🌪️👑
-🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
-🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
-🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
-🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑
-🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 🩴👟🔥💀😈🌪️👑`
+  // Block 2: Rupesh God Of Spam style
+  `👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥
+👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀𝐌 👑🔥`,
+
+  // Block 3: Madarchod chup chaap gaand mara le style
+  `🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥
+🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥`,
+
+  // Block 4: New Added 1 (Roz Chhodta Hun)
+  `💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥
+💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥`,
+
+  // Block 5: New Added 2 (Aukat Nahi Hai)
+  `🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨
+🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨`,
+
+  // Block 6: New Added 3 (Bam Blast)
+  `💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎
+💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎`
 ];
 
 function isAdmin(msg) {
   return ADMINS.has(String(msg.from?.id));
 }
 
-// ================= 1. WHATSAPP ENGINE (MULTI-GC INDEPENDENT) =================
+// ================= 1. WHATSAPP ENGINE =================
 async function startWhatsApp() {
   const authFolder = 'auth_baileys';
   const { state, saveCreds } = await useMultiFileAuthState(authFolder);
@@ -112,7 +202,6 @@ async function startWhatsApp() {
     const cleanText = text.trim();
     const lower = cleanText.toLowerCase();
 
-    // Har group ka apna independent state
     if (!activeTasks[jid]) {
       activeTasks[jid] = { spam: false, nc: false, hater: 'TARGET' };
     }
@@ -140,7 +229,7 @@ async function startWhatsApp() {
       return;
     }
 
-    // Heavy Infinity Spam Loop
+    // Heavy Unstoppable Spam Loop
     if (lower.startsWith('!spam') || lower.startsWith('.spam')) {
       const parts = cleanText.split(' ');
       if (parts.length > 1) {
@@ -151,18 +240,18 @@ async function startWhatsApp() {
 
       activeTasks[jid].spam = true;
       const haterName = activeTasks[jid].hater;
-      await waSock.sendMessage(jid, { text: `🚀 RUPESH WA HEAVY SPAM STARTED (${speedConfig.WA}) for Target: ${haterName}!` });
+      await waSock.sendMessage(jid, { text: `🚀 RUPESH WA UNSTOPPABLE SPAM STARTED (${speedConfig.WA}) for Target: ${haterName}!` });
 
       const runSpamLoop = () => {
         if (!activeTasks[jid]?.spam) return;
-        const delay = speedConfig.WA === 'slow' ? 2000 : (speedConfig.WA === 'normal' ? 500 : 50);
+        const delay = speedConfig.WA === 'slow' ? 2000 : (speedConfig.WA === 'normal' ? 500 : 20);
         
         setTimeout(async () => {
           if (!activeTasks[jid]?.spam) return;
           try {
-            const rawLine = spamList[Math.floor(Math.random() * spamList.length)];
-            const formattedLine = rawLine.replace(/{target}/g, haterName);
-            await waSock.sendMessage(jid, { text: formattedLine });
+            const rawBlock = spamList[Math.floor(Math.random() * spamList.length)];
+            const formattedBlock = rawBlock.replace(/{target}/g, haterName);
+            await waSock.sendMessage(jid, { text: formattedBlock });
           } catch(e){}
           if (activeTasks[jid]?.spam) runSpamLoop();
         }, delay);
@@ -173,7 +262,7 @@ async function startWhatsApp() {
       return;
     }
 
-    // Name Change (NC) Loop matching the current target
+    // Name Change Loop
     if (lower.startsWith('!nc') || lower.startsWith('.nc')) {
       const parts = cleanText.split(' ');
       if (parts.length > 1) {
@@ -240,19 +329,12 @@ function createBot(token, name) {
     bot.sendMessage(msg.chat.id, `
 🤖 RUPESH MULTI-PLATFORM PANEL (${name})
 
-📱 WHATSAPP
+📱 WHATSAPP & GENERAL
 /wa_login - Get WhatsApp Pairing Code
 /wa_status - Check WA Connection
-/wa_speed <slow|normal|fast> - Set WA Speed
-/wa_commands - View WA guide
-
-⚙️ GENERAL
 /status - System Health
-/addadmin <id> - Add Admin
-/removeadmin <id> - Remove Admin
-/admins - List Admins
-/addspam <text> - Add new spam line
-/spamlist - Total lines count
+/addspam <text> - Add new unmixed spam block
+/spamlist - Total spam blocks count
 
 📋 COMMAND HELP
 /commands
@@ -263,79 +345,33 @@ function createBot(token, name) {
     if (!isAdmin(msg)) return;
     bot.sendMessage(msg.chat.id, `
 📱 MAIN COMMANDS LIST
-• \`/wa_commands\` - WhatsApp specific commands
+• \`/wa_commands\` - WhatsApp guide
 • \`/status\` - System check
-• \`/admins\` - View admins list
 • \`/spamlist\` - View loaded spam database
+• \`/addspam <text>\` - Add global spam text
 `);
   });
 
   bot.onText(/^\/wa_commands$/, msg => {
     if (!isAdmin(msg)) return;
     bot.sendMessage(msg.chat.id, `
-📱 WHATSAPP COMMANDS (Multi-GC supported):
-• \`!target <name>\` - Set target name for this specific group
-• \`!spam <target>\` - Start Heavy 20-Line Spam Flood
+📱 WHATSAPP GC COMMANDS:
+• \`!target <name>\` - Set target name for this group
+• \`!spam <target>\` - Start Heavy Unstoppable Spam Flood
 • \`!nc <target>\` - Group Name Change Loop with Target
 • \`!speed <slow|normal|fast>\` - Set Speed
-• \`!stop\` - Stop active tasks in this group
+• \`!stop\` - Stop active tasks
 `);
   });
 
   bot.onText(/^\/status$/, msg => {
     if (!isAdmin(msg)) return;
-    bot.sendMessage(msg.chat.id, `✅ Control bot ${name} online\n🕐 ${new Date().toISOString()}\n🚀 Speeds -> WA: ${speedConfig.WA} | TG: ${speedConfig.TG} | IG: ${speedConfig.IG}`);
-  });
-
-  bot.onText(/^\/admins$/, msg => {
-    if (!isAdmin(msg)) return;
-    bot.sendMessage(msg.chat.id, `👑 Admins:\n${[...ADMINS].map(x => `• ${x}`).join("\n")}`);
-  });
-
-  bot.onText(/^\/addadmin\s+(\d+)$/, msg => {
-    if (!isAdmin(msg)) return;
-    const newAdmin = msg.match[1];
-    ADMINS.add(newAdmin);
-    bot.sendMessage(msg.chat.id, `✅ Admin added: ${newAdmin}`);
-  });
-
-  bot.onText(/^\/removeadmin\s+(\d+)$/, msg => {
-    if (!isAdmin(msg)) return;
-    const remAdmin = msg.match[1];
-    ADMINS.delete(remAdmin);
-    bot.sendMessage(msg.chat.id, `✅ Admin removed: ${remAdmin}`);
-  });
-
-  bot.onText(/^\/wa_login$/, msg => {
-    if (!isAdmin(msg)) return;
-    const chatId = msg.chat.id.toString();
-    userState[chatId] = 'WAITING_WA_NUM';
-    bot.sendMessage(chatId, `📱 Apna WhatsApp number bhej (Jaise: \`919876543210\`):`, { parse_mode: 'Markdown' });
-  });
-
-  bot.onText(/^\/wa_status$/, msg => {
-    if (!isAdmin(msg)) return;
-    const status = waSock ? "🟢 Connected / Ready" : "🔴 Disconnected";
-    bot.sendMessage(msg.chat.id, `📱 WhatsApp Status: ${status}`);
-  });
-
-  bot.onText(/^\/(wa|tg|ig)_speed(?:\s+(slow|normal|fast))?$/i, msg => {
-    if (!isAdmin(msg)) return;
-    const platform = msg.match[1].toUpperCase();
-    const speed = msg.match[2];
-    
-    if (!speed) {
-      bot.sendMessage(msg.chat.id, `⚡ Current ${platform} Speed is: **${speedConfig[platform]}**`, { parse_mode: 'Markdown' });
-      return;
-    }
-
-    speedConfig[platform] = speed.toLowerCase();
-    bot.sendMessage(msg.chat.id, `⚡ ${platform} Speed successfully changed to: ${speed.toLowerCase()}`);
+    bot.sendMessage(msg.chat.id, `✅ Control bot ${name} online\n🕐 ${new Date().toISOString()}\n🚀 Loaded Spam Blocks: ${spamList.length}`);
   });
 
   bot.onText(/^\/spamlist$/, msg => {
     if (!isAdmin(msg)) return;
-    bot.sendMessage(msg.chat.id, `📋 Total Heavy Spam Blocks Loaded: ${spamList.length}`);
+    bot.sendMessage(msg.chat.id, `📋 Total Independent Spam Blocks Loaded: ${spamList.length}`);
   });
 
   bot.on('message', async msg => {
@@ -352,7 +388,7 @@ function createBot(token, name) {
           const cleanNum = text.replace(/[^0-9]/g, '');
           const code = await waSock.requestPairingCode(cleanNum);
           const formattedCode = code?.match(/.{1,4}/g)?.join('-') || code;
-          bot.sendMessage(chatId, `✅ **WhatsApp Pairing Code:** \`${formattedCode}\``, { parse_mode: 'Markdown' });
+          bot.sendMessage(chatId, `✅ **WhatsApp Pairing Code:** \`${formattedCode}\``, { parse__mode: 'Markdown' });
         } catch (e) {
           bot.sendMessage(chatId, `❌ Code Error: ${e.message}`);
         }
@@ -364,7 +400,7 @@ function createBot(token, name) {
       const newLine = text.replace(/\/addspam/i, '').trim();
       if (newLine) {
         spamList.push(newLine);
-        bot.sendMessage(msg.chat.id, `✅ New Heavy Spam Block Added! Total: ${spamList.length}`);
+        bot.sendMessage(msg.chat.id, `✅ New Unmixed Spam Block Added! Total Blocks: ${spamList.length}`);
       }
       return;
     }
