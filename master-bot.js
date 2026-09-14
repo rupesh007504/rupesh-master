@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 const TOKEN_1 = process.env.TOKEN_1;
 const TOKEN_2 = process.env.TOKEN_2;
 
-// Permanent & Dynamic Admins
+// Rupesh Permanent Admins
 const ADMINS = new Set(['7501991033', '8824915409']);
 
 const bots = [];
@@ -18,41 +18,26 @@ let igClient = null;
 let userState = {};
 let activeTasks = {};
 
-// Platform speed configuration (Default ultra fast water flow)
+// Ultra Fast Speed Lock
 let speedConfig = {
   WA: 'fast',
   IG: 'fast',
   TG: 'fast'
 };
 
-// Super Optimized Single-Line Heavy Spam Blocks (No commands removed, extremely compact file size)
+// Cleaned Spam Database (Daddy & God blocks removed, Custom target blocks active)
 let spamList = [
-  `🔥 [ {target} ] ➔ ⚡️🖤 𝐃𝐀𝐃𝐃𝐘 𝐈𝐬 𝐇ᴇʀᴇ 💫🎭 ➔ {target} ki aukaat me aake gand mara le bhosdike 💥 ➔ {target} teri maa ko roz chodte hain madarchod ⚡️ ➔ {target} system faad denge madarchod 🔥 ➔ {target} gaaand mara le chupchap bsdk 🌪️ ➔ {target} teri behan ke bhosde me bam blast 💥 ➔ {target} nalla saala aukaat se bahar ja raha hai 🩴 ➔ {target} jute aur chappalo se swagat hoga tera 👟 ➔ {target} chup chaap gaand mara le bhosdike 😈 ➔ {target} teri maa ki chut me chappal aur jute bajenge 💥 ➔ {target} aukaat me reh warna ujaad denge ⚡️ ➔ {target} system ka baap hoon madarchod 🔥 ➔ {target} bhaag mat bsdk aukat dikha apni 🌪️ ➔ {target} madarchod ke bachhe chup chap gand mara 💥 ➔ {target} system hilana band kar warna gaaad denge 🩴 ➔ {target} teri poori khandan ki maa chod denge ⚡️ ➔ {target} aukaat me rehke baat kar bhosdike 🔥 ➔ {target} system faad ke rakh denge tera madarchod 😈 ➔ {target} aur uski poori gang ki gaand me bamboo denge 💥 ➔ {target} bsdk aukat me reh le warna zinda gaad denge 🩴 ➔ {target} ki maa ka bhosda faad denge ek hi jhatke me ⚡️ ➔ {target} shakal se bhikari aur harkat se chinal bsdk 🔥 ➔ {target} tera poora khandan gaand maraata hai 🌪️ ➔ {target} madarchod ki aulaad chup chap baith ja 💥 ➔ {target} teri behan ko nanga karke nachayenge 😈 ➔ {target} bsdk aukat me reh warna ghar से utha lenge 🩴 ➔ {target} tera baap hoon madarchod baat mat kar zyaada ⚡️ ➔ {target} teri maa ke bhosde me rocket launcher ghusa denge 🔥 ➔ {target} nalla kahin ka road chhap bhikari bsdk 🌪️ ➔ {target} teri gaand me laal mirch bhar denge madarchod 💥 ➔ {target} aukat me rehke gand mara bsdk 😈`,
-
-  `👑 [ {target} ] ➔ 🔥 𝐑𝐔𝐏𝐄𝐒𝐇 𝐆𝐎𝐃 𝐎𝐅 𝐒𝐏𝐀ᴍ 👑🔥 ➔ {target} nalla bhikari saala aukat dekh apni ⚡️ ➔ {target} teri behan ke bhosde me aag laga denge 🔥 ➔ {target} madarchod ke bachhe chup reh bsdk 🌪️ ➔ {target} jute aur chappalo se swagat hoga tera 💥 ➔ {target} aukat se bahar mat jaa madarchod 🩴 ➔ {target} tera system hi hila ke rakh denge ek baar me 😈 ➔ {target} teri maa ke mooh me apna lund de denge ⚡️ ➔ {target} madarchod ke pille aukat me aa ja 🔥 ➔ {target} tera poora khandan bikhari hai bsdk 🌪️ ➔ {target} teri gaand me sariya dal denge madarchod 💥 ➔ {target} bhagwaan bhi bacha nahi payega tujhe ab 🩴 ➔ {target} bsdk teri maa ki chut me aag laga denge 😈 ➔ {target} tera system faadne ke liye akela kaafi hoon ⚡️ ➔ {target} madarchod sharam karle thodi si bsdk 🔥 ➔ {target} teri behan ko gaadi ke piche bandh ke ghumayenge 🌪️ ➔ {target} bsdk tera baap hoon main pehchan le 💥 ➔ {target} teri maa ka bhosda tod denge madarchod 🩴 ➔ {target} aukat me reh warna kachra karke fek denge 😈 ➔ {target} madarchod saala aukat me rehke baat kar ⚡️ ➔ {target} teri poori gang ko nanga karke chodenge 🔥 ➔ {target} bsdk tera game bajane wale hain aaj 🌪️ ➔ {target} teri maa ke bhosde me bomb phod denge 💥 ➔ {target} madarchod shakal dekhi hai apni aaine me 🩴 ➔ {target} bsdk tera khel khatam hone wala hai ab 😈 ➔ {target} teri maa ko sadak par nanga nachayenge ⚡️ ➔ {target} madarchod aukat me rehke gand mara le 🔥 ➔ {target} bsdk tera poora vansh nalla hai 🌪️ ➔ {target} teri maa ki chut fadd denge bsdk 💥 ➔ {target} system ka baap rupesh hai yaad rakhna 😈`,
-
-  `🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥 ➔ {target} teri maa ki chut me chappal aur jute bajenge 🩴 ➔ {target} aukaat me reh warna ujaad denge ⚡️ ➔ {target} system ka baap hoon madarchod 🔥 ➔ {target} gaaand mara le bhosdike chup chap 🌪️ ➔ {target} tera poora khandan jute khata hai 💥 ➔ {target} madarchod aukat me rehke baat kar 🩴 ➔ {target} teri maa ke bhosde me danda denge 😈 ➔ {target} bsdk tera game bajane me maza aata hai ⚡️ ➔ {target} teri behan ka bhosda laal kar denge 🔥 ➔ {target} madarchod saala nalla kahin ka 🌪️ ➔ {target} teri gaand me bambu de denge bsdk 💥 ➔ {target} aukat me reh warna zinda dafna denge 🩴 ➔ {target} madarchod shakal dekhi hai apni 😈 ➔ {target} teri maa ko roz naye raaste par chodte hain ⚡️ ➔ {target} bsdk tera system faad ke rakh denge 🔥 ➔ {target} teri maa ka bhosda fadd denge 🌪️ ➔ {target} madarchod chup chaap baith ja warna tod denge 💥 ➔ {target} bsdk apni aukat me rehna sikh le pehle 🩴 ➔ {target} teri maa ke mooh me apna lund de denge 😈 ➔ {target} madarchod ke pille aukat me aa ja ⚡️ ➔ {target} tera poora khandan bikhari hai bsdk 🔥 ➔ {target} teri gaand me sariya dal denge madarchod 🌪️ ➔ {target} bhagwaan bhi bacha nahi payega tujhe ab 💥 ➔ {target} bsdk teri maa ki chut me aag laga denge 🩴 ➔ {target} tera system faadne ke liye akela kaafi hoon 😈 ➔ {target} madarchod sharam karle thodi si bsdk ⚡️ ➔ {target} teri behan ko gaadi ke piche bandh ke ghumayenge 🔥 ➔ {target} bsdk tera baap hoon main pehchan le 🌪️ ➔ {target} teri maa ka bhosda tod denge madarchod 💥 ➔ {target} aukat me reh warna kachra karke fek denge 🩴`,
-
-  `💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥 ➔ {target} bhaag mat bsdk aukat dikha apni 💥 ➔ {target} jute aur chappalo se maar khayega tu 🩴 ➔ {target} madarchod ke bachhe chup chap gand mara ⚡️ ➔ {target} system hilana band kar warna gaaad denge 🔥 ➔ {target} teri maa ke bhosde me bomb phod denge 🌪️ ➔ {target} bsdk aukat me rehna sikh le 💥 ➔ {target} tera poora khandan nalla hai 🩴 ➔ {target} madarchod chup chaap gaand mara le 😈 ➔ {target} teri maa ki chut fadd denge ek jhatke me ⚡️ ➔ {target} bsdk tera khel khatam hone wala hai 🔥 ➔ {target} teri maa ko sadak par nanga nachayenge 🌪️ ➔ {target} madarchod aukat me rehke gand mara le 💥 ➔ {target} bsdk tera poora vansh bhikari hai 🩴 ➔ {target} teri maa ki chut me aag laga denge bsdk 😈 ➔ {target} system ka baap rupesh hai yaad rakhna ⚡️ ➔ {target} tera system hi hila ke rakh denge ek baar me 🔥 ➔ {target} teri maa ke mooh me apna lund de denge 🌪️ ➔ {target} madarchod ke pille aukat me aa ja 💥 ➔ {target} tera poora khandan bikhari hai bsdk 🩴 ➔ {target} teri gaand me sariya dal denge madarchod 😈 ➔ {target} bhagwaan bhi bacha nahi payega tujhe ab ⚡️ ➔ {target} bsdk teri maa ki chut me aag laga denge 🔥 ➔ {target} tera system faadne ke liye akela kaafi hoon 🌪️ ➔ {target} madarchod sharam karle thodi si bsdk 💥 ➔ {target} teri behan ko gaadi ke piche bandh ke ghumayenge 🩴 ➔ {target} bsdk tera baap hoon main pehchan le 😈 ➔ {target} teri maa ka bhosda tod denge madarchod ⚡️ ➔ {target} aukat me reh warna kachra karke fek denge 🔥 ➔ {target} madarchod saala aukat me rehke baat kar 🌪️ ➔ {target} teri poori gang ko nanga karke chodenge 💥`,
-
-  `🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨ ➔ {target} teri poori khandan ki maa chod denge ⚡️ ➔ {target} aukaat me rehke baat kar bhosdike 🔥 ➔ {target} system faad ke rakh denge tera madarchod 🌪️ ➔ {target} bsdk aukat me reh le warna zinda gaad denge 💥 ➔ {target} ki maa ka bhosda faad denge ek hi jhatke me 🩴 ➔ {target} shakal se bhikari aur harkat se chinal bsdk 😈 ➔ {target} tera poora khandan gaand maraata hai ⚡️ ➔ {target} madarchod ki aulaad chup chap baith ja 🔥 ➔ {target} teri behan ko nanga karke nachayenge 🌪️ ➔ {target} bsdk aukat me reh warna ghar se utha lenge 💥 ➔ {target} tera baap hoon madarchod baat mat kar zyaada 🩴 ➔ {target} teri maa ke bhosde me rocket launcher ghusa denge 😈 ➔ {target} nalla kahin ka road chhap bhikari bsdk ⚡️ ➔ {target} teri gaand me laal mirch bhar denge madarchod 🔥 ➔ {target} aukat me rehke gand mara bsdk 🌪️ ➔ {target} nalla saala aukat se bahar ja raha hai 💥 ➔ {target} teri maa ka bhosda laal kar denge bsdk 🩴 ➔ {target} madarchod chup chaap baith ja warna tod denge 😈 ➔ {target} tera system hi hila ke rakh denge ek baar me ⚡️ ➔ {target} ki behan ko roz naye road par chodte hain 🔥 ➔ {target} bsdk apni aukat me rehna sikh le pehle 🌪️ ➔ {target} teri maa ke mooh me apna lund de denge 💥 ➔ {target} madarchod ke pille aukat me aa ja 🩴 ➔ {target} tera poora khandan bikhari hai bsdk 😈 ➔ {target} teri gaand me sariya dal denge madarchod ⚡️ ➔ {target} bhagwaan bhi bacha nahi payega tujhe ab 🔥 ➔ {target} bsdk teri maa ki chut me aag laga denge 🌪️ ➔ {target} tera system faadne ke liye akela kaafi hoon 💥 ➔ {target} madarchod sharam karle thodi si bsdk 🩴 ➔ {target} teri behan ko gaadi ke piche bandh ke ghumayenge 😈`,
-
-  `💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎 ➔ {target} aur uski poori gang ki gaand me bamboo denge 💥 ➔ {target} bsdk aukat me reh le warna zinda gaad denge ⚡️ ➔ {target} ki maa ka bhosda faad denge ek hi jhatke me 🔥 ➔ {target} shakal se bhikari aur harkat se chinal bsdk 🌪️ ➔ {target} tera poora khandan gaand maraata hai 🩴 ➔ {target} madarchod ki aulaad chup chap baith ja 😈 ➔ {target} teri behan ko nanga karke nachayenge 💥 ➔ {target} bsdk aukat me reh warna ghar se utha lenge ⚡️ ➔ {target} tera baap hoon madarchod baat mat kar zyaada 🔥 ➔ {target} teri maa ke bhosde me rocket launcher ghusa denge 🌪️ ➔ {target} nalla kahin ka road chhap bhikari bsdk 🩴 ➔ {target} teri gaand me laal mirch bhar denge madarchod 😈 ➔ {target} aukat me rehke gand mara bsdk 💥 ➔ {target} nalla saala aukat se bahar ja raha hai ⚡️ ➔ {target} teri maa ka bhosda laal kar denge bsdk 🔥 ➔ {target} madarchod chup chaap baith ja warna tod denge 🌪️ ➔ {target} tera system hi hila ke rakh denge ek baar me 🩴 ➔ {target} ki behan ko roz naye road par chodte hain 😈 ➔ {target} bsdk apni aukat me rehna sikh le pehle 💥 ➔ {target} teri maa ke mooh me apna lund de denge ⚡️ ➔ {target} madarchod ke pille aukat me aa ja 🔥 ➔ {target} tera poora khandan bikhari hai bsdk 🌪️ ➔ {target} teri gaand me sariya dal denge madarchod 🩴 ➔ {target} bhagwaan bhi bacha nahi payega tujhe ab 😈 ➔ {target} bsdk teri maa ki chut me aag laga denge 💥 ➔ {target} tera system faadne ke liye akela kaafi hoon ⚡️ ➔ {target} madarchod sharam karle thodi si bsdk 🔥 ➔ {target} teri behan ko gaadi ke piche bandh ke ghumayenge 🌪️ ➔ {target} bsdk tera baap hoon main pehchan le 🩴 ➔ {target} system ka baap rupesh hai yaad rakhna 😈`,
-
-  `💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥 ➔ {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥 ➔ {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥 ➔ {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥 ➔ {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥`,
-
-  `👑🔥 RUPESH 𝑆𝐴𝑅𝐾𝐴𝑅 𝐼𝑆 𝑁𝑂.1 ☠️💥 ➔ RUPESH 𝑆𝐴𝑅𝐾𝐴𝑅 𝐼𝑆 𝑁𝑂.1 ☠️💥 ➔ RUPESH 𝑆𝐴𝑅𝐾𝐴𝑅 𝐼𝑆 𝑁𝑂.1 ☠️💥 ➔ RUPESH 𝑆𝐴𝑅𝐾𝐴𝑅 𝐼𝑆 𝑁𝑂.1 ☠️💥 ➔ RUPESH 𝑆𝐴𝑅𝐾𝐴𝑅 𝐼𝑆 𝑁𝑂.1 ☠️💥`,
-
+  `🩴 [ {target} ] ➔ 💥 Madarchod chup chaap gaand mara le 😈🔥 ➔ {target} teri maa ki chut me chappal aur jute bajenge 🩴 ➔ {target} aukaat me reh warna ujaad denge ⚡️ ➔ {target} system ka baap rupesh hoon madarchod 🔥`,
+  `💎✨ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎 ➔ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎 ➔ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎 ➔ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎 ➔ {target} 𝐓ᴇʀɪ 𝐌ᴀᴀ ᴋɪ ᴄʜᴜᴛ ᴍᴇ ʙᴀᴍ ʙʟᴀsᴛ ✨💎`,
   `🌙𒈒 {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨ ➔ {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨ ➔ {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨ ➔ {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨ ➔ {target} 𝐾𝐼 𝐴𝑈𝐾𝐴𝑇 𝑁𝐴𝐻𝐼 𝐻𝐴𝐼 🤍✨`,
-
-  `🔥👑 RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 ➔ RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 ➔ RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 ➔ RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥 ➔ RUPESH 𝐆ᴏᴅ 𝐎ғ 𝐒ᴘ𝐀ᴍ 👑🔥`
+  `💥😈 {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥 ➔ {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥 ➔ {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥 ➔ {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥 ➔ {target} 𝐾𝐼 𝑀𝐴𝐴 𝐾𝑂 𝑅𝑂𝑍 𝐶𝐻𝑂𝐷𝑇𝐴 𝐻𝑈𝑁 ⚡️🔥`
 ];
 
 function isAdmin(msg) {
   return ADMINS.has(String(msg.from?.id));
 }
 
-// ================= 1. WHATSAPP ENGINE =================
+// ================= 1. WHATSAPP ENGINE (UNLIMITED & INSTANT) =================
 async function startWhatsApp() {
   const authFolder = 'auth_baileys';
   const { state, saveCreds } = await useMultiFileAuthState(authFolder);
@@ -94,30 +79,24 @@ async function startWhatsApp() {
       activeTasks[jid] = { spam: false, nc: false, hater: 'TARGET' };
     }
 
+    // Set Target command (!target <name>)
     if (lower.startsWith('!target') || lower.startsWith('.target')) {
       const parts = cleanText.split(' ');
       parts.shift();
       const targetName = parts.join(' ').trim();
       if (targetName) {
         activeTasks[jid].hater = targetName;
-        await waSock.sendMessage(jid, { text: `🎯 Target Updated for this Group: ${targetName}` });
+        await waSock.sendMessage(jid, { text: `🎯 Target Set Successfully for this Group: ${targetName}` });
       }
       return;
     }
 
     if (lower.startsWith('!speed') || lower.startsWith('.speed')) {
-      const parts = cleanText.split(' ');
-      if (parts[1]) {
-        const spd = parts[1].toLowerCase();
-        if (spd === 'slow' || spd === 'normal' || spd === 'fast') {
-          speedConfig.WA = spd;
-          await waSock.sendMessage(jid, { text: `⚡ WhatsApp Speed updated to: ${spd}` });
-        }
-      }
+      await waSock.sendMessage(jid, { text: `⚡ Speed is locked to ULTRA FAST (0ms delay)!` });
       return;
     }
 
-    // Unstoppable Water-Flow Infinite Spam Loop
+    // Non-stop Instant Spam Loop (!spam <target> or direct !spam)
     if (lower.startsWith('!spam') || lower.startsWith('.spam')) {
       const parts = cleanText.split(' ');
       if (parts.length > 1) {
@@ -128,30 +107,30 @@ async function startWhatsApp() {
 
       activeTasks[jid].spam = true;
       const haterName = activeTasks[jid].hater;
-      await waSock.sendMessage(jid, { text: `🚀 RUPESH WA WATER-FLOW SPAM STARTED (${speedConfig.WA}) for Target: ${haterName}!` });
+      await waSock.sendMessage(jid, { text: `🚀 RUPESH UNSTOPPABLE SPAM STARTED for Target: ${haterName}!` });
 
       const runSpamLoop = () => {
         if (!activeTasks[jid]?.spam) return;
-        const delay = speedConfig.WA === 'slow' ? 500 : (speedConfig.WA === 'normal' ? 100 : 0);
-        
-        setTimeout(async () => {
+        setImmediate(async () => {
           if (!activeTasks[jid]?.spam) return;
           try {
             const rawBlock = spamList[Math.floor(Math.random() * spamList.length)];
-            const formattedBlock = rawBlock.replace(/{target}/g, haterName);
+            const formattedBlock = rawBlock.replace(/{target}/g, haterName).replace(/\(alpha ke hater\)/g, haterName);
             await waSock.sendMessage(jid, { text: formattedBlock });
           } catch(e){}
           if (activeTasks[jid]?.spam) runSpamLoop();
-        }, delay);
+        });
       };
 
+      // Multi-threading for maximum saturation speed
+      runSpamLoop();
       runSpamLoop();
       runSpamLoop();
       runSpamLoop();
       return;
     }
 
-    // Fast Group Name Change Loop
+    // High Speed Group Name Change Loop (!nc <target>)
     if (lower.startsWith('!nc') || lower.startsWith('.nc')) {
       const parts = cleanText.split(' ');
       if (parts.length > 1) {
@@ -162,7 +141,7 @@ async function startWhatsApp() {
 
       activeTasks[jid].nc = true;
       const haterName = activeTasks[jid].hater;
-      await waSock.sendMessage(jid, { text: `🔥 Group Name Change Loop Started for Target: ${haterName}!` });
+      await waSock.sendMessage(jid, { text: `🔥 Instant Group Name Change Loop Started for: ${haterName}!` });
 
       const runNcLoop = () => {
         if (!activeTasks[jid]?.nc) return;
@@ -170,12 +149,12 @@ async function startWhatsApp() {
           if (!activeTasks[jid]?.nc) return;
           try {
             const rawBlock = spamList[Math.floor(Math.random() * spamList.length)];
-            const shortText = rawBlock.replace(/{target}/g, haterName).slice(0, 20);
-            const newTitle = `🔥 ${haterName} ➔ ${shortText} 🩴⚡`;
+            const snippet = rawBlock.replace(/{target}/g, haterName).replace(/\(alpha ke hater\)/g, haterName).slice(0, 20);
+            const newTitle = `🔥 ${haterName} ➔ ${snippet} 🩴⚡ Rupesh`;
             await waSock.groupUpdateSubject(jid, newTitle);
           } catch(e){}
           if (activeTasks[jid]?.nc) runNcLoop();
-        }, 2000);
+        }, 500); // Super fast 0.5s rotation
       };
       runNcLoop();
       return;
@@ -184,7 +163,7 @@ async function startWhatsApp() {
     if (lower === '!stop' || lower === '.stop') {
       activeTasks[jid].spam = false;
       activeTasks[jid].nc = false;
-      await waSock.sendMessage(jid, { text: `🛑 All Tasks Stopped in this Group Chat!` });
+      await waSock.sendMessage(jid, { text: `🛑 All Tasks Successfully Stopped in this Group!` });
       return;
     }
   });
@@ -207,7 +186,7 @@ async function startInstagram() {
 }
 startInstagram();
 
-// ================= 3. TELEGRAM MULTI-BOT & FULL PANEL COMMAND STRUCTURE =================
+// ================= 3. TELEGRAM MULTI-BOT & COMMAND STRUCTURE =================
 function createBot(token, name) {
   if (!token) return;
 
@@ -223,18 +202,18 @@ function createBot(token, name) {
 📱 WHATSAPP
 /wa_login - Get WhatsApp Pairing Code
 /wa_status - Check WA Connection
-/wa_speed <slow|normal|fast> - Set WA Speed
+/wa_speed - Speed Info
 /wa_commands - View WA guide
 
 📸 INSTAGRAM
 /ig_connect - IG Connect Info
 /ig_status - Check IG Status
-/ig_speed <slow|normal|fast> - Set IG Speed
+/ig_speed - IG Speed Info
 /ig_commands - View IG guide
 
 ✈️ TELEGRAM
 /tg_status - Telegram Bot Status
-/tg_speed <slow|normal|fast> - Set TG Speed
+/tg_speed - TG Speed Info
 /tg_commands - View TG guide
 
 ⚙️ GENERAL
@@ -242,7 +221,7 @@ function createBot(token, name) {
 /addadmin <id> - Add Admin
 /removeadmin <id> - Remove Admin
 /admins - List Admins
-/addspam <text> - Add new spam line
+/addspam <text> - Add new spam line globally
 /spamlist - Total lines count
 
 📋 COMMAND HELP
@@ -252,6 +231,7 @@ function createBot(token, name) {
 
   bot.onText(/^\/commands$/, msg => {
     if (!isAdmin(msg)) return;
+
     bot.sendMessage(msg.chat.id, `
 📱 MAIN COMMANDS LIST
 • \`/wa_commands\` - WhatsApp specific commands
@@ -260,19 +240,18 @@ function createBot(token, name) {
 • \`/status\` - System check
 • \`/admins\` - View admins list
 • \`/spamlist\` - View loaded spam database
-• \`/addspam <text>\` - Add new global spam block
+• \`/addspam <text>\` - Add custom spam line instantly
 `);
   });
 
   bot.onText(/^\/wa_commands$/, msg => {
     if (!isAdmin(msg)) return;
     bot.sendMessage(msg.chat.id, `
-📱 WHATSAPP COMMANDS (Multi-GC supported):
-• \`!target <name>\` - Set target name for this specific group
-• \`!spam <target>\` - Start Heavy Infinity Spam Flood
-• \`!nc <target>\` - Group Name Change Loop with Target
-• \`!speed <slow|normal|fast>\` - Set Speed
-• \`!stop\` - Stop active tasks in this group
+📱 WHATSAPP COMMANDS (Use inside GC):
+• \`!target <name>\` - Set target name for group
+• \`!spam <target>\` - Start Ultra-Fast Spam Flood
+• \`!nc <target>\` - Ultra-Fast Group Name Change Loop
+• \`!stop\` - Stop active tasks
 `);
   });
 
@@ -282,28 +261,26 @@ function createBot(token, name) {
 📸 INSTAGRAM COMMANDS:
 • \`/ig_connect\` - Connect info
 • \`/ig_status\` - Check login status
-• \`/ig_speed <slow|normal|fast>\` - Set IG Speed
 `);
   });
 
   bot.onText(/^\/tg_commands$/, msg => {
     if (!isAdmin(msg)) return;
     bot.sendMessage(msg.chat.id, `
-✈️ TELEGRAM COMMANDS:
-• \`!spam <target>\` - Telegram High-Speed Spam (Use in TG group/DM)
+✈️ TELEGRAM COMMANDS (Use inside GC/DM):
+• \`!spam <target>\` - Telegram High-Speed Spam
 • \`!stop\` - Stop Telegram tasks
-• \`/tg_speed <slow|normal|fast>\` - Set TG Speed
 `);
   });
 
   bot.onText(/^\/status$/, msg => {
     if (!isAdmin(msg)) return;
-    bot.sendMessage(msg.chat.id, `✅ Control bot ${name} online\n🕐 ${new Date().toISOString()}\n🚀 Loaded Heavy Blocks: ${spamList.length}\n⚡ Speeds -> WA: ${speedConfig.WA} | TG: ${speedConfig.TG} | IG: ${speedConfig.IG}`);
+    bot.sendMessage(msg.chat.id, `✅ Rupesh Bot ${name} online\n🕐 ${new Date().toISOString()}\n🚀 Loaded Spam Blocks: ${spamList.length}\n⚡ Speed: ULTRA FAST (0ms)`);
   });
 
   bot.onText(/^\/admins$/, msg => {
     if (!isAdmin(msg)) return;
-    bot.sendMessage(msg.chat.id, `👑 Admins:\n${[...ADMINS].map(x => `• ${x}`).join("\n")}`);
+    bot.sendMessage(msg.chat.id, `👑 Rupesh Admins:\n${[...ADMINS].map(x => `• ${x}`).join("\n")}`);
   });
 
   bot.onText(/^\/addadmin\s+(\d+)$/, msg => {
@@ -320,21 +297,109 @@ function createBot(token, name) {
     bot.sendMessage(msg.chat.id, `✅ Admin removed: ${remAdmin}`);
   });
 
+  bot.onText(/^\/wa_login$/, msg => {
+    if (!isAdmin(msg)) return;
+    const chatId = msg.chat.id.toString();
+    userState[chatId] = 'WAITING_WA_NUM';
+    bot.sendMessage(chatId, `📱 Apna WhatsApp number bhej (Jaise: \`919876543210\`):`, { parse_mode: 'Markdown' });
+  });
+
+  bot.onText(/^\/wa_status$/, msg => {
+    if (!isAdmin(msg)) return;
+    const status = waSock ? "🟢 Connected / Ready" : "🔴 Disconnected";
+    bot.sendMessage(msg.chat.id, `📱 WhatsApp Status: ${status}`);
+  });
+
   bot.onText(/^\/spamlist$/, msg => {
     if (!isAdmin(msg)) return;
-    bot.sendMessage(msg.chat.id, `📦 Total Loaded Spam Blocks: ${spamList.length}`);
+    bot.sendMessage(msg.chat.id, `📋 Total Spam Blocks Loaded: ${spamList.length}`);
   });
+
+  bot.on('message', async msg => {
+    if (!isAdmin(msg)) return;
+    const chatId = msg.chat.id.toString();
+    const text = msg.text ? msg.text.trim() : '';
+    const lower = text.toLowerCase();
+
+    if (userState[chatId] === 'WAITING_WA_NUM') {
+      delete userState[chatId];
+      bot.sendMessage(chatId, `⏳ Generating WhatsApp Pairing Code...`);
+      try {
+        setTimeout(async () => {
+          try {
+            const cleanNum = text.replace(/[^0-9]/g, '');
+            const code = await waSock.requestPairingCode(cleanNum);
+            const formattedCode = code?.match(/.{1,4}/g)?.join('-') || code;
+            bot.sendMessage(chatId, `✅ **WhatsApp Pairing Code:** \`${formattedCode}\``, { parse_mode: 'Markdown' });
+          } catch (e) {
+            bot.sendMessage(chatId, `❌ Code Error: ${e.message}`);
+          }
+        }, 2000);
+      } catch (e) {
+        bot.sendMessage(chatId, `❌ Error: ${e.message}`);
+      }
+      return;
+    }
+
+    // Add custom spam directly from bot chat copy-paste
+    if (lower.startsWith('/addspam')) {
+      const newLine = text.replace(/\/addspam/i, '').trim();
+      if (newLine) {
+        spamList.push(newLine);
+        bot.sendMessage(msg.chat.id, `✅ New Spam Block Added Successfully! Total Blocks: ${spamList.length}`);
+      } else {
+        bot.sendMessage(msg.chat.id, `❌ Usage: /addspam <tera text ya gali>`);
+      }
+      return;
+    }
+
+    if (!activeTasks[chatId]) {
+      activeTasks[chatId] = { spam: false, hater: 'TARGET' };
+    }
+
+    // Telegram instant spam handler
+    if (lower.startsWith('!spam')) {
+      const parts = text.split(' ');
+      if (parts.length > 1) {
+        parts.shift();
+        activeTasks[chatId].hater = parts.join(' ');
+      }
+      activeTasks[chatId].spam = true;
+      const hater = activeTasks[chatId].hater;
+      bot.sendMessage(chatId, `🚀 Rupesh Telegram Unstoppable Spam Started for ${hater}!`);
+
+      const runTgSpam = () => {
+        if (!activeTasks[chatId]?.spam) return;
+        setImmediate(() => {
+          if (!activeTasks[chatId]?.spam) return;
+          try {
+            const rawBlock = spamList[Math.floor(Math.random() * spamList.length)];
+            const formattedBlock = rawBlock.replace(/{target}/g, hater).replace(/\(alpha ke hater\)/g, hater);
+            bot.sendMessage(chatId, formattedBlock);
+          } catch(e){}
+          if (activeTasks[chatId]?.spam) runTgSpam();
+        });
+      };
+      runTgSpam();
+      runTgSpam();
+      return;
+    }
+
+    if (lower === '!stop') {
+      activeTasks[chatId].spam = false;
+      bot.sendMessage(chatId, `🛑 Telegram Tasks Stopped Successfully!`);
+    }
+  });
+
+  console.log(`✅ Telegram Bot ${name} started successfully`);
 }
 
-createBot(TOKEN_1, "BOT_1");
-createBot(TOKEN_2, "BOT_2");
+createBot(TOKEN_1, "TOKEN_1");
+createBot(TOKEN_2, "TOKEN_2");
 
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Rupesh Multi-Platform Bot is running smoothly!\n');
-});
+http.createServer((req, res) => {
+  res.writeHead(200, {"Content-Type": "text/plain"});
+  res.end("Rupesh Control Bot Online 24/7");
+}).listen(PORT);
 
-server.listen(PORT, () => {
-  console.log(`🌐 Server listening on port ${PORT}`);
-});
-    
+console.log(`🌐 Server running on port ${PORT}`);
