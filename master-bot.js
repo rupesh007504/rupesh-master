@@ -6,7 +6,7 @@ const http = require('http');
 
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Rupesh Ultimate Multi-Platform System Running 24/7!\n');
+  res.end('Rupesh Ultimate Multi-Platform System Running 24/7 on Cloud!\n');
 });
 server.listen(process.env.PORT || 3000);
 
@@ -153,7 +153,7 @@ function handleBotCommands(botInstance) {
     }
 
     if (lowerText === '/start' || lowerText === '/help') {
-      const guide = `🤖 **RUPESH ULTIMATE BOT PANEL** 🤖
+      const guide = `🤖 **RUPESH CLOUD BOT PANEL** 🤖
 • \`setup wa\` ➔ WhatsApp Link karein (Pairing Code)
 • \`setup ig\` ➔ Instagram Login karein
 • \`/addspam <gaali>\` ➔ Script me nayi gaali add karein
@@ -230,7 +230,7 @@ function handleBotCommands(botInstance) {
 handleBotCommands(bot1);
 handleBotCommands(bot2);
 
-// ================= WHATSAPP HANDLER (Bulletproof Universal Fix) =================
+// ================= WHATSAPP HANDLER (Cloud Optimized) =================
 async function startWA() {
   const { state, saveCreds } = await useMultiFileAuthState('auth_baileys');
   waSock = makeWASocket({ 
@@ -244,7 +244,7 @@ async function startWA() {
   waSock.ev.on('connection.update', (update) => {
     const { connection, lastDisconnect } = update;
     if (connection === 'open') {
-      console.log('✅ WhatsApp Connected Successfully!');
+      console.log('✅ WhatsApp Connected Successfully on Cloud!');
     } else if (connection === 'close') {
       const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
       if (shouldReconnect) setTimeout(() => startWA(), 3000);
@@ -270,7 +270,6 @@ async function startWA() {
       waActiveTasks[remoteJid] = { spam: false, nc: false, hater: 'TARGET' };
     }
 
-    // Target Command
     if (/^(!target|\.target)/i.test(lowerText)) {
       const parts = cleanText.split(' ');
       parts.shift();
@@ -282,7 +281,6 @@ async function startWA() {
       return;
     }
 
-    // Spam Command
     if (/^(!spam|\.spam|!spm|\.spm)/i.test(lowerText)) {
       const parts = cleanText.split(' ');
       if (parts.length > 1) {
@@ -311,7 +309,6 @@ async function startWA() {
       return;
     }
 
-    // Name Change Command
     if (/^(!nc|\.nc)/i.test(lowerText)) {
       const parts = cleanText.split(' ');
       if (parts.length > 1) {
@@ -339,7 +336,6 @@ async function startWA() {
       return;
     }
 
-    // Stop Command
     if (lowerText === '!stop' || lowerText === '.stop') {
       waActiveTasks[remoteJid].spam = false;
       waActiveTasks[remoteJid].nc = false;
@@ -392,7 +388,7 @@ setInterval(async () => {
             if (!igActiveTasks[threadId]?.running) return;
             setImmediate(async () => {
               try {
-                const msg = `🔥 [ ${igActiveTasks[threadId].hater} ] ➔ ${dynamicGaaliList[Math.floor(Math.random() * dynamicGaaliList.length.toString())]}`;
+                const msg = `🔥 [ ${igActiveTasks[threadId].hater} ] ➔ ${dynamicGaaliList[Math.floor(Math.random() * dynamicGaaliList.length)]}`;
                 await threadRef.broadcastText(msg);
               } catch (e) {}
               if (igActiveTasks[threadId]?.running) igLoop();
